@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="card bg-base-100 shadow-lg">
+  <div class="card-body">
+    <h2 class="text-xl font-bold mb-2 text-center">PHI Login</h2>
+    <form method="POST">
+      {{ form.hidden_tag() }}
+      <div class="form-control">
+        {{ form.username.label(class_="label") }}
+        {{ form.username(class_="input input-bordered") }}
+      </div>
+      <div class="form-control mt-4">
+        {{ form.password.label(class_="label") }}
+        {{ form.password(class_="input input-bordered") }}
+      </div>
+      <div class="form-control mt-6">
+        {{ form.submit(class_="btn btn-primary") }}
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

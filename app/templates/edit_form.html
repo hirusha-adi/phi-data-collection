@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block title %}Edit Form{% endblock %}
+{% block content %}
+<h2 class="text-xl font-bold mb-4">Edit Inspection</h2>
+<form method="POST">
+  {{ form.hidden_tag() }}
+  <div class="form-control mb-2">
+    {{ form.area.label(class_="label") }}
+    {{ form.area(class_="select select-bordered w-full") }}
+  </div>
+  <div class="form-control mb-2">
+    {{ form.location.label(class_="label") }}
+    {{ form.location(class_="select select-bordered w-full") }}
+  </div>
+  <div class="form-control mb-4">
+    {{ form.cockroaches.label(class_="label") }}
+    {{ form.cockroaches(class_="select select-bordered w-full") }}
+  </div>
+  <div class="form-control">
+    {{ form.submit(class_="btn btn-primary") }}
+  </div>
+</form>
+<a href="{{ url_for('main.dashboard') }}" class="btn btn-ghost mt-4">← Back to Dashboard</a>
+{% endblock %}

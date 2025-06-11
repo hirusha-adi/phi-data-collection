@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="flex justify-between items-center mb-4">
+  <h2 class="text-xl font-bold">Dashboard</h2>
+  <a href="{{ url_for('main.logout') }}" class="btn btn-sm btn-error">Logout</a>
+</div>
+
+<a href="{{ url_for('main.add_form') }}" class="btn btn-success w-full mb-4">+ New Inspection</a>
+
+<h3 class="text-lg font-semibold mb-2">Locations</h3>
+<ul class="menu bg-base-100 rounded-box">
+  {% for location in locations %}
+    <li>
+      <a href="{{ url_for('main.view_forms', location_id=location.id) }}">
+        📍 {{ location.name }} ({{ location.area.name }})
+      </a>
+    </li>
+  {% else %}
+    <li><span>No locations found.</span></li>
+  {% endfor %}
+</ul>
+{% endblock %}

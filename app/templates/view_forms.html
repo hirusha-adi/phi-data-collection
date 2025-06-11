@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% block title %}Form Records{% endblock %}
+{% block content %}
+<h2 class="text-xl font-bold mb-4">Inspection Records</h2>
+<ul class="menu bg-base-100 rounded-box">
+  {% for form in forms %}
+    <li class="border-b border-base-300">
+      <div class="flex flex-col gap-1 p-2">
+        <span>🕒 {{ form.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+        <span>Area: {{ form.area.name }}</span>
+        <span>Location: {{ form.location.name }}</span>
+        <span>Cockroaches: 
+          <span class="font-bold {% if form.cockroaches %}text-error{% else %}text-success{% endif %}">
+            {% if form.cockroaches %}Yes{% else %}No{% endif %}
+          </span>
+        </span>
+        <span>By: {{ form.added_by }}</span>
+
+        <div class="flex gap-2 mt-2">
+          {% if form.added_by == current_user.username %}
+            <a href="{{ url_for('main.edit_form', form_id=form.id) }}" class="btn btn-xs btn-warning">Edit</a>
+            <a href="{{ url_for('main.delete_form', form_id=form.id) }}" class="btn btn-xs btn-error"
+              onclick="return confirm('Are you sure you want to delete this?')">Delete</a>
+          {% endif %}
+        </div>
+      </div>
+    </li>
+  {% else %}
+    <li><span>No forms available.</span></li>
+  {% endfor %}
+</ul>
+<a href="{{ url_for('main.dashboard') }}" class="btn btn-ghost mt-4">← Back to Dashboard</a>
+{% endblock %}
