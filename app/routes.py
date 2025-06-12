@@ -13,16 +13,20 @@ def load_user(user_id):
 
 @main.route('/', methods=['GET', 'POST'])
 def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user and check_password_hash(user.password, form.password.data):
+    if request.method == 'POST':
+        username = request.form.get('username', '').strip()
+        password = request.form.get('password', '')
+
+        user = User.query.filter_by(username=username).first()
+        if user and check_password_hash(user.password, password):
             login_user(user)
             user.last_accessed = db.func.now()
             db.session.commit()
             return redirect(url_for('main.dashboard'))
-        flash('Invalid credentials')
-    return render_template('login.html', form=form)
+
+        flash('Invalid credentials', 'error')
+
+    return render_template('login.html')
 
 @main.route('/logout')
 @login_required

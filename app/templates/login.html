@@ -5,17 +5,16 @@
   <div class="card-body">
     <h2 class="text-xl font-bold mb-2 text-center">PHI Login</h2>
     <form method="POST">
-      {{ form.hidden_tag() }}
       <div class="form-control">
-        {{ form.username.label(class_="label") }}
-        {{ form.username(class_="input input-bordered") }}
+        <label for="username" class="label">Username</label>
+        <input type="text" name="username" id="username" class="input input-bordered" required>
       </div>
       <div class="form-control mt-4">
-        {{ form.password.label(class_="label") }}
-        {{ form.password(class_="input input-bordered") }}
+        <label for="password" class="label">Password</label>
+        <input type="password" name="password" id="password" class="input input-bordered" required>
       </div>
       <div class="form-control mt-6">
-        {{ form.submit(class_="btn btn-primary") }}
+        <button type="submit" class="btn btn-primary">Login</button>
       </div>
     </form>
   </div>
