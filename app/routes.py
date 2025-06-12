@@ -43,20 +43,30 @@ def dashboard():
 @main.route('/add_form', methods=['GET', 'POST'])
 @login_required
 def add_form():
-    form = QuestionEntryForm()
-    form.area.choices = [(a.id, a.name) for a in Area.query.all()]
-    form.location.choices = [(l.id, l.name) for l in Location.query.all()]
-    if form.validate_on_submit():
-        q = QuestionForm(
-            area_id=form.area.data,
-            location_id=form.location.data,
-            cockroaches=form.cockroaches.data,
-            added_by=current_user.username
-        )
-        db.session.add(q)
-        db.session.commit()
-        return redirect(url_for('main.dashboard'))
-    return render_template('add_form.html', form=form)
+    areas = Area.query.all()
+    locations = Location.query.all()
+
+    if request.method == 'POST':
+        try:
+            area_id = int(request.form.get('area'))
+            location_id = int(request.form.get('location'))
+            cockroaches_value = request.form.get('cockroaches')  # 'True' or 'False' as strings
+            cockroaches = cockroaches_value == 'True'
+
+            q = QuestionForm(
+                area_id=area_id,
+                location_id=location_id,
+                cockroaches=cockroaches,
+                added_by=current_user.username
+            )
+            db.session.add(q)
+            db.session.commit()
+            return redirect(url_for('main.dashboard'))
+        except (TypeError, ValueError):
+            flash("Invalid input. Please try again.", "error")
+
+    return render_template('add_form.html', areas=areas, locations=locations)
+
 
 @main.route('/forms/<int:location_id>')
 @login_required
@@ -72,32 +82,26 @@ def edit_form(form_id):
         flash("You can only edit your own entries.")
         return redirect(url_for('main.dashboard'))
 
-    form = QuestionEntryForm()
-    form.area.choices = [(a.id, a.name) for a in Area.query.all()]
-    form.location.choices = [(l.id, l.name) for l in Location.query.all()]
+    areas = Area.query.all()
+    locations = Location.query.all()
 
-    if request.method == 'GET':
-        form.area.data = form_record.area_id
-        form.location.data = form_record.location_id
-        form.cockroaches.data = form_record.cockroaches
+    if request.method == 'POST':
+        try:
+            area_id = int(request.form.get('area'))
+            location_id = int(request.form.get('location'))
+            cockroaches_value = request.form.get('cockroaches')  # 'True' or 'False'
+            cockroaches = cockroaches_value == 'True'
 
-    print(1)
-    print(form.cockroaches.data)
+            form_record.area_id = area_id
+            form_record.location_id = location_id
+            form_record.cockroaches = cockroaches
+            db.session.commit()
+            return redirect(url_for('main.dashboard'))
+        except (TypeError, ValueError):
+            flash("Invalid input. Please try again.", "error")
 
-    if form.validate_on_submit():
-        print(1.2)
-        form_record.area_id = form.area.data
-        form_record.location_id = form.location.data
-        form_record.cockroaches = form.cockroaches.data
-        print(2)
-        db.session.commit()
-        print(3)
-        print("Form errors:", form.errors)
-        return redirect(url_for('main.dashboard'))
+    return render_template('edit_form.html', form_record=form_record, areas=areas, locations=locations)
 
-    print(4)
-    print("Form errors:", form.errors)
-    return render_template('edit_form.html', form=form, form_id=form_id)
 
 
 @main.route('/delete_form/<int:form_id>')
