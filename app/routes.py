@@ -74,10 +74,13 @@ def edit_form(form_id):
     if form.validate_on_submit():
         form_record.area_id = form.area.data
         form_record.location_id = form.location.data
-        form_record.cockroaches = form.cockroaches.data
+        form_record.cockroaches = (str(form.cockroaches.data) == 'True')
         db.session.commit()
         return redirect(url_for('main.dashboard'))
-
+    
+    if form.errors:
+        print("Form errors:", form.errors)
+        
     return render_template('edit_form.html', form=form, form_id=form_id)
 
 @main.route('/delete_form/<int:form_id>')
@@ -90,3 +93,30 @@ def delete_form(form_id):
     db.session.delete(form_record)
     db.session.commit()
     return redirect(url_for('main.dashboard'))
+
+@main.route('/add-location', methods=['GET', 'POST'])
+@login_required
+def add_location():
+    areas = Area.query.all()
+    
+    if request.method == 'POST':
+        area_id = request.form.get('area_id')
+        location_name = request.form.get('location_name')
+        owner_name = request.form.get('owner_name')
+        contact_number = request.form.get('contact_number')
+
+        if area_id and location_name and owner_name and contact_number:
+            new_location = Location(
+                area_id=area_id,
+                name=location_name,
+                owner_name=owner_name,
+                contact_number=contact_number
+            )
+            db.session.add(new_location)
+            db.session.commit()
+            flash("Location added successfully!", "success")
+            return redirect(url_for('main.dashboard'))
+        else:
+            flash("Please fill all the fields.", "error")
+
+    return render_template('add_location.html', areas=areas)

@@ -10,5 +10,10 @@ class LoginForm(FlaskForm):
 class QuestionEntryForm(FlaskForm):
     area = SelectField('Area', coerce=int)
     location = SelectField('Location', coerce=int)
-    cockroaches = SelectField('Are there cockroaches?', choices=[(True, 'Yes'), (False, 'No')], coerce=lambda x: x == 'True')
+    cockroaches = SelectField(
+        'Cockroaches',
+        choices=[('True', 'Yes'), ('False', 'No')],
+        validators=[DataRequired()],
+        coerce=str
+    )
     submit = SubmitField('Submit')

@@ -15,11 +15,13 @@ class Area(db.Model):
 
 class Location(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
-    area_id = db.Column(db.Integer, db.ForeignKey('area.id'))
-    owner = db.Column(db.String(100))
-    contact = db.Column(db.String(20))
+    name = db.Column(db.String(100), nullable=False)
+    owner_name = db.Column(db.String(100), nullable=False)
+    contact_number = db.Column(db.String(20), nullable=False)
+    area_id = db.Column(db.Integer, db.ForeignKey('area.id'), nullable=False)
+
     area = db.relationship('Area', backref=db.backref('locations', lazy=True))
+
 
 class QuestionForm(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -29,3 +31,7 @@ class QuestionForm(db.Model):
     added_by = db.Column(db.String(50))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     last_updated = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # ✅ Add these relationships:
+    area = db.relationship('Area', backref=db.backref('forms', lazy=True))
+    location = db.relationship('Location', backref=db.backref('forms', lazy=True))

@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% block title %}Add Location{% endblock %}
+{% block content %}
+
+<h1 class="text-xl font-bold mb-4">Add New Location</h1>
+<form method="POST">
+    <div class="form-control mb-4">
+        <label class="label">Area</label>
+        <select name="area_id" class="select select-bordered" required>
+            {% for area in areas %}
+            <option value="{{ area.id }}">{{ area.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-control mb-4">
+        <label class="label">Location Name</label>
+        <input type="text" name="location_name" class="input input-bordered" required />
+    </div>
+
+    <div class="form-control mb-4">
+        <label class="label">Owner Name</label>
+        <input type="text" name="owner_name" class="input input-bordered" required />
+    </div>
+
+    <div class="form-control mb-4">
+        <label class="label">Contact Number</label>
+        <input type="text" name="contact_number" class="input input-bordered" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary w-full">Save Location</button>
+</form>
+
+<a href="{{ url_for('main.dashboard') }}" class="btn btn-link w-full mt-4">⬅ Back to Dashboard</a>
+
+{% endblock %}

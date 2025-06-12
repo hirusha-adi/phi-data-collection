@@ -10,6 +10,7 @@
 
 <h3 class="text-lg font-semibold mb-2">Locations</h3>
 <ul class="menu bg-base-100 rounded-box">
+  <a href="{{ url_for('main.add_location') }}" class="btn btn-primary w-full mt-4">➕ Add New Location</a>
   {% for location in locations %}
     <li>
       <a href="{{ url_for('main.view_forms', location_id=location.id) }}">
