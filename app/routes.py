@@ -119,12 +119,12 @@ def delete_form(form_id):
 @login_required
 def add_location():
     areas = Area.query.all()
-    
+
     if request.method == 'POST':
-        area_id = request.form.get('area_id')
-        location_name = request.form.get('location_name')
-        owner_name = request.form.get('owner_name')
-        contact_number = request.form.get('contact_number')
+        area_id = request.form.get('area_id', type=int)
+        location_name = request.form.get('location_name', '').strip()
+        owner_name = request.form.get('owner_name', '').strip()
+        contact_number = request.form.get('contact_number', '').strip()
 
         if area_id and location_name and owner_name and contact_number:
             new_location = Location(
@@ -138,6 +138,6 @@ def add_location():
             flash("Location added successfully!", "success")
             return redirect(url_for('main.dashboard'))
         else:
-            flash("Please fill all the fields.", "error")
+            flash("All fields are required.", "error")
 
     return render_template('add_location.html', areas=areas)
