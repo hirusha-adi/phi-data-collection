@@ -68,20 +68,33 @@ def edit_form(form_id):
         flash("You can only edit your own entries.")
         return redirect(url_for('main.dashboard'))
 
-    form = QuestionEntryForm(obj=form_record)
+    form = QuestionEntryForm()
     form.area.choices = [(a.id, a.name) for a in Area.query.all()]
     form.location.choices = [(l.id, l.name) for l in Location.query.all()]
+
+    if request.method == 'GET':
+        form.area.data = form_record.area_id
+        form.location.data = form_record.location_id
+        form.cockroaches.data = form_record.cockroaches
+
+    print(1)
+    print(form.cockroaches.data)
+
     if form.validate_on_submit():
+        print(1.2)
         form_record.area_id = form.area.data
         form_record.location_id = form.location.data
-        form_record.cockroaches = (str(form.cockroaches.data) == 'True')
+        form_record.cockroaches = form.cockroaches.data
+        print(2)
         db.session.commit()
-        return redirect(url_for('main.dashboard'))
-    
-    if form.errors:
+        print(3)
         print("Form errors:", form.errors)
-        
+        return redirect(url_for('main.dashboard'))
+
+    print(4)
+    print("Form errors:", form.errors)
     return render_template('edit_form.html', form=form, form_id=form_id)
+
 
 @main.route('/delete_form/<int:form_id>')
 @login_required
