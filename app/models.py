@@ -58,12 +58,15 @@ class QuestionForm(db.Model):
     toilets_cleanliness = db.Column(db.Integer, nullable=False)
 
     # Food Handler
+    is_eligigible_food_handler_info = db.Column(db.Boolean, nullable=False)
     medical_certificates = db.Column(db.Integer, nullable=False)
     proper_clothing = db.Column(db.Integer, nullable=False)
     unhygienic_behaviour = db.Column(db.Integer, nullable=False)
     clean_utensils = db.Column(db.Integer, nullable=False)
 
     # Processing and Serving
+    # TODO:
+    is_eligible_processing_info = db.Column(db.Boolean, nullable=False)
     walls_hygienic = db.Column(db.Integer, nullable=False)
     floor_hygienic = db.Column(db.Integer, nullable=False)
     ceiling_hygienic = db.Column(db.Integer, nullable=False)
@@ -72,6 +75,8 @@ class QuestionForm(db.Model):
     closed_bins = db.Column(db.Integer, nullable=False)
 
     # Food Storage
+    # TODO:
+    is_eligible_food_storage_info = db.Column(db.Boolean, nullable=False)
     cooked_food_closed = db.Column(db.Integer, nullable=False)
     cooked_food_temp = db.Column(db.Integer, nullable=False)
     cooked_food_container = db.Column(db.Integer, nullable=False)
@@ -85,3 +90,4 @@ class QuestionForm(db.Model):
     # Inspection Record - User relationship (see who created it)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('forms', lazy=True))
+

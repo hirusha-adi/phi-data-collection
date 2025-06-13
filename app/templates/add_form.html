@@ -53,6 +53,12 @@
         {% endfor %}
 
         <h4 class="font-semibold mt-6">Food Handlers</h4>
+        <div class="form-control">
+          <label class="cursor-pointer label">
+            <span class="label-text">This location has no food handler information</span>
+            <input type="checkbox" name="is_eligible_food_handler_info" id="chk-food-handler" class="checkbox checkbox-error" />
+          </label>
+        </div>
         {% for field in [
         ('medical_certificates', 'Medical certificates'),
         ('proper_clothing', 'Hair net, mask, gloves, shoes'),
@@ -65,11 +71,18 @@
             <option value="5">Good (5)</option>
             <option value="2">Statisfactory (2)</option>
             <option value="0" selected>Bad (0)</option>
+            <option value="-1" disabled hidden>Not Applicable (-1)</option>
           </select>
         </div>
         {% endfor %}
 
         <h4 class="font-semibold mt-6">Processing and Serving</h4>
+        <div class="form-control">
+          <label class="cursor-pointer label">
+            <span class="label-text">This location has no processing/serving information</span>
+            <input type="checkbox" name="is_eligible_processing_info" id="chk-processing" class="checkbox checkbox-error" />
+          </label>
+        </div>
         {% for field in [
         ('walls_hygienic', 'Walls hygienic'),
         ('floor_hygienic', 'Floor hygienic'),
@@ -88,12 +101,19 @@
             <option value="4">Good (4)</option>
             <option value="2">Statisfactory (2)</option>
             <option value="0" selected>Bad (0)</option>
+            <option value="-1" disabled hidden>Not Applicable (-1)</option>
             {% endif %}
           </select>
         </div>
         {% endfor %}
 
         <h4 class="font-semibold mt-6">Food Storage</h4>
+        <div class="form-control">
+          <label class="cursor-pointer label">
+            <span class="label-text">This location has no food storage information</span>
+            <input type="checkbox" name="is_eligible_food_storage_info" id="chk-storage" class="checkbox checkbox-error" />
+          </label>
+        </div>
         {% for field in [
         ('cooked_food_closed', 'Cooked food kept closed'),
         ('cooked_food_temp', '2/4 temperature rule'),
@@ -107,6 +127,7 @@
             <option value="4">Good (4)</option>
             <option value="2">Statisfactory (2)</option>
             <option value="0" selected>Bad (0)</option>
+            <option value="-1" disabled hidden>Not Applicable (-1)</option>
           </select>
         </div>
         {% endfor %}
@@ -119,5 +140,45 @@
     </div>
   </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<script>
+  function toggleSection(checkboxId, sectionFields) {
+    const isChecked = $(checkboxId).is(':checked');
+    sectionFields.forEach(id => {
+      const select = $(`select[name="${id}"]`);
+      if (isChecked) {
+        select.val('-1').prop('disabled', true);
+      } else {
+        select.val('0').prop('disabled', false);
+      }
+    });
+  }
+
+  $('#chk-food-handler').on('change', function () {
+    toggleSection('#chk-food-handler', [
+      'medical_certificates', 'proper_clothing', 'unhygienic_behaviour', 'clean_utensils'
+    ]);
+  });
+
+  $('#chk-processing').on('change', function () {
+    toggleSection('#chk-processing', [
+      'walls_hygienic', 'floor_hygienic', 'ceiling_hygienic',
+      'food_surfaces_clean', 'wastewater_disposal', 'closed_bins'
+    ]);
+  });
+
+  $('#chk-storage').on('change', function () {
+    toggleSection('#chk-storage', [
+      'cooked_food_closed', 'cooked_food_temp', 'cooked_food_container', 'cooked_food_contam_prevented'
+    ]);
+  });
+
+  // Optional: trigger change once on page load (in case form retains state)
+  $('#chk-food-handler').trigger('change');
+  $('#chk-processing').trigger('change');
+  $('#chk-storage').trigger('change');
+</script>
 
 {% endblock %}

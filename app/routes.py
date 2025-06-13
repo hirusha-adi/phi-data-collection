@@ -44,6 +44,7 @@ def dashboard():
     forms = QuestionForm.query.order_by(QuestionForm.created_at.desc()).limit(10).all()
     return render_template('dashboard.html', locations=locations, forms=forms)
 
+
 @main.route('/add_form', methods=['GET', 'POST'])
 @login_required
 def add_form():
@@ -51,44 +52,86 @@ def add_form():
 
     if request.method == 'POST':
         try:
-            location_id = int(request.form.get('location'))
-            kwargs = {
-                'premises_registered': int(request.form.get('premises_registered')),
-                'certificate_displayed': int(request.form.get('certificate_displayed')),
-                'not_convicted': int(request.form.get('not_convicted')),
-                'food_not_destroyed': int(request.form.get('food_not_destroyed')),
-                'safe_water': int(request.form.get('safe_water')),
-                'cleanliness': int(request.form.get('cleanliness')),
-                'pests_animals': int(request.form.get('pests_animals')),
-                'sound_pollution': int(request.form.get('sound_pollution')),
-                'toilets_cleanliness': int(request.form.get('toilets_cleanliness')),
-                'medical_certificates': int(request.form.get('medical_certificates')),
-                'proper_clothing': int(request.form.get('proper_clothing')),
-                'unhygienic_behaviour': int(request.form.get('unhygienic_behaviour')),
-                'clean_utensils': int(request.form.get('clean_utensils')),
-                'walls_hygienic': int(request.form.get('walls_hygienic')),
-                'floor_hygienic': int(request.form.get('floor_hygienic')),
-                'ceiling_hygienic': int(request.form.get('ceiling_hygienic')),
-                'food_surfaces_clean': int(request.form.get('food_surfaces_clean')),
-                'wastewater_disposal': int(request.form.get('wastewater_disposal')),
-                'closed_bins': int(request.form.get('closed_bins')),
-                'cooked_food_closed': int(request.form.get('cooked_food_closed')),
-                'cooked_food_temp': int(request.form.get('cooked_food_temp')),
-                'cooked_food_container': int(request.form.get('cooked_food_container')),
-                'cooked_food_contam_prevented': int(request.form.get('cooked_food_contam_prevented')),
-                'uncooked_food_contam_prevented': int(request.form.get('uncooked_food_contam_prevented')),
-                'location_id': location_id,
-                'user_id': current_user.id
-            }
+            form_data = request.form
 
-            form = QuestionForm(**kwargs)
+            # Get checkbox flags
+            is_eligible_food_handler_info = form_data.get('is_eligible_food_handler_info') == 'on'
+            is_eligible_processing_info = form_data.get('is_eligible_processing_info') == 'on'
+            is_eligible_food_storage_info = form_data.get('is_eligible_food_storage_info') == 'on'
+
+            # Create a new form instance
+            form = QuestionForm()
+
+            # Relationships
+            form.location_id = int(form_data.get('location'))
+            form.user_id = current_user.id
+
+            # General
+            form.premises_registered = int(form_data.get('premises_registered'))
+            form.certificate_displayed = int(form_data.get('certificate_displayed'))
+            form.not_convicted = int(form_data.get('not_convicted'))
+            form.food_not_destroyed = int(form_data.get('food_not_destroyed'))
+
+            # Building
+            form.safe_water = int(form_data.get('safe_water'))
+            form.cleanliness = int(form_data.get('cleanliness'))
+            form.pests_animals = int(form_data.get('pests_animals'))
+            form.sound_pollution = int(form_data.get('sound_pollution'))
+            form.toilets_cleanliness = int(form_data.get('toilets_cleanliness'))
+
+            # Food Handler
+            if is_eligible_food_handler_info:
+                form.medical_certificates = -1
+                form.proper_clothing = -1
+                form.unhygienic_behaviour = -1
+                form.clean_utensils = -1
+            else:
+                form.medical_certificates = int(form_data.get('medical_certificates'))
+                form.proper_clothing = int(form_data.get('proper_clothing'))
+                form.unhygienic_behaviour = int(form_data.get('unhygienic_behaviour'))
+                form.clean_utensils = int(form_data.get('clean_utensils'))
+
+            # Processing and Serving
+            if is_eligible_processing_info:
+                form.walls_hygienic = -1
+                form.floor_hygienic = -1
+                form.ceiling_hygienic = -1
+                form.food_surfaces_clean = -1
+                form.wastewater_disposal = -1
+                form.closed_bins = -1
+            else:
+                form.walls_hygienic = int(form_data.get('walls_hygienic'))
+                form.floor_hygienic = int(form_data.get('floor_hygienic'))
+                form.ceiling_hygienic = int(form_data.get('ceiling_hygienic'))
+                form.food_surfaces_clean = int(form_data.get('food_surfaces_clean'))
+                form.wastewater_disposal = int(form_data.get('wastewater_disposal'))
+                form.closed_bins = int(form_data.get('closed_bins'))
+
+            # Food Storage
+            if is_eligible_food_storage_info:
+                form.cooked_food_closed = -1
+                form.cooked_food_temp = -1
+                form.cooked_food_container = -1
+                form.cooked_food_contam_prevented = -1
+            else:
+                form.cooked_food_closed = int(form_data.get('cooked_food_closed'))
+                form.cooked_food_temp = int(form_data.get('cooked_food_temp'))
+                form.cooked_food_container = int(form_data.get('cooked_food_container'))
+                form.cooked_food_contam_prevented = int(form_data.get('cooked_food_contam_prevented'))
+
+            # This is always required and must be submitted normally
+            form.uncooked_food_contam_prevented = int(form_data.get('uncooked_food_contam_prevented'))
+
+            # Save to DB
             db.session.add(form)
             db.session.commit()
-            flash("Inspection form submitted successfully!", "success")
+
+            flash("Inspection form saved successfully!", "success")
             return redirect(url_for('main.dashboard'))
 
         except Exception as e:
-            flash("Invalid form input. Please correct and try again.", "error")
+            db.session.rollback()
+            flash(f"Error occurred: {str(e)}", "danger")
 
     return render_template('add_form.html', locations=locations)
 
