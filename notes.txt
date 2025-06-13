@@ -57,4 +57,55 @@ Food storage
 - Cooked perishable food - Contamination prevented (no: 0, mediocre: 2, yes: 4) 
 - Uncooked food - Contamination prevented (no: 0, mediocre: 2, yes: 4) 
 
-Also, write me the frotnend code
+
+then, write me the frotnend and the backend code as well
+pasted below are the old codes
+i want you to update them
+
+<form method="POST" class="space-y-4">
+    <div>
+      <label for="location" class="label text-sm font-medium">Select Location</label>
+      <select name="location" id="location" class="select select-bordered w-full" required>
+        <option value="" disabled selected>-- Choose a Location --</option>
+        {% for location in locations %}
+          <option value="{{ location.id }}">{{ location.name }}, {{ location.area.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label for="cockroaches" class="label text-sm font-medium">Cockroach Presence</label>
+      <select name="cockroaches" id="cockroaches" class="select select-bordered w-full" required>
+        <option value="True">Yes</option>
+        <option value="False">No</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary w-full">💾 Save Inspection</button>
+</form>
+
+
+@main.route('/add_form', methods=['GET', 'POST'])
+@login_required
+def add_form():
+    locations = Location.query.all()
+
+    if request.method == 'POST':
+        try:
+            location_id = int(request.form.get('location'))
+            cockroaches_value = request.form.get('cockroaches')  # 'True' or 'False' as strings
+            cockroaches = cockroaches_value == 'True'
+
+            q = QuestionForm(
+                location_id=location_id,
+                cockroaches=cockroaches,
+                user_id=current_user.id
+            )
+            db.session.add(q)
+            db.session.commit()
+            return redirect(url_for('main.dashboard'))
+        except (TypeError, ValueError):
+            flash("Invalid input. Please try again.", "error")
+
+    return render_template('add_form.html', locations=locations)
+
+
+

@@ -39,16 +39,55 @@ class Location(db.Model):
     
     
 class QuestionForm(db.Model):
+    # Basic Details
     id = db.Column(db.Integer, primary_key=True)
-    cockroaches = db.Column(db.Boolean)
-
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     last_updated = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    # General Details
+    premises_registered = db.Column(db.Integer, nullable=False)
+    certificate_displayed = db.Column(db.Integer, nullable=False)
+    not_convicted = db.Column(db.Integer, nullable=False)
+    food_not_destroyed = db.Column(db.Integer, nullable=False)
+
+    # Building Details
+    safe_water = db.Column(db.Integer, nullable=False)
+    cleanliness = db.Column(db.Integer, nullable=False)
+    pests_animals = db.Column(db.Integer, nullable=False)
+    sound_pollution = db.Column(db.Integer, nullable=False)
+    toilets_cleanliness = db.Column(db.Integer, nullable=False)
+
+    # Food Handler
+    is_eligigible_food_handler_info = db.Column(db.Boolean, nullable=False)
+    medical_certificates = db.Column(db.Integer, nullable=False)
+    proper_clothing = db.Column(db.Integer, nullable=False)
+    unhygienic_behaviour = db.Column(db.Integer, nullable=False)
+    clean_utensils = db.Column(db.Integer, nullable=False)
+
+    # Processing and Serving
+    # TODO:
+    is_eligible_processing_info = db.Column(db.Boolean, nullable=False)
+    walls_hygienic = db.Column(db.Integer, nullable=False)
+    floor_hygienic = db.Column(db.Integer, nullable=False)
+    ceiling_hygienic = db.Column(db.Integer, nullable=False)
+    food_surfaces_clean = db.Column(db.Integer, nullable=False)
+    wastewater_disposal = db.Column(db.Integer, nullable=False)
+    closed_bins = db.Column(db.Integer, nullable=False)
+
+    # Food Storage
+    # TODO:
+    is_eligible_food_storage_info = db.Column(db.Boolean, nullable=False)
+    cooked_food_closed = db.Column(db.Integer, nullable=False)
+    cooked_food_temp = db.Column(db.Integer, nullable=False)
+    cooked_food_container = db.Column(db.Integer, nullable=False)
+    cooked_food_contam_prevented = db.Column(db.Integer, nullable=False)
+    uncooked_food_contam_prevented = db.Column(db.Integer, nullable=False)
+
     # Inspection Record - Location relationship
-    location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
+    location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=False)
     location = db.relationship('Location', backref=db.backref('forms', lazy=True))
-    
+
     # Inspection Record - User relationship (see who created it)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id')) 
-    user = db.relationship('User', backref=db.backref('forms', lazy=True)) 
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('forms', lazy=True))
+
