@@ -1,22 +1,39 @@
 {% extends "layout.html" %}
 {% block title %}Login{% endblock %}
 {% block content %}
-<div class="card bg-base-100 shadow-lg">
-  <div class="card-body">
-    <h2 class="text-xl font-bold mb-2 text-center">PHI Login</h2>
-    <form method="POST">
-      <div class="form-control">
-        <label for="username" class="label">Username</label>
-        <input type="text" name="username" id="username" class="input input-bordered" required>
+
+<div class="min-h-screen flex items-center justify-center bg-base-200 px-4 py-12">
+  <div class="w-full max-w-sm">
+    <div class="card bg-base-100 shadow-xl rounded-2xl">
+      <div class="card-body">
+        <h2 class="text-2xl font-bold text-center mb-4 text-primary">PHI Login</h2>
+
+        <form method="POST">
+          <div class="form-control mb-4">
+            <label for="username" class="label">
+              <span class="label-text font-semibold">Username</span>
+            </label>
+            <input type="text" name="username" id="username" class="input input-bordered input-primary w-full" required>
+          </div>
+
+          <div class="form-control mb-6">
+            <label for="password" class="label">
+              <span class="label-text font-semibold">Password</span>
+            </label>
+            <input type="password" name="password" id="password" class="input input-bordered input-primary w-full" required>
+          </div>
+
+          <div class="form-control">
+            <button type="submit" class="btn btn-primary w-full text-base font-semibold">Login</button>
+          </div>
+        </form>
+
+        <div class="mt-6 text-center text-sm text-gray-500">
+          Need help? Contact 0704240444 via WhatsApp.
+        </div>
       </div>
-      <div class="form-control mt-4">
-        <label for="password" class="label">Password</label>
-        <input type="password" name="password" id="password" class="input input-bordered" required>
-      </div>
-      <div class="form-control mt-6">
-        <button type="submit" class="btn btn-primary">Login</button>
-      </div>
-    </form>
+    </div>
   </div>
 </div>
+
 {% endblock %}
