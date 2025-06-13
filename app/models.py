@@ -28,10 +28,10 @@ class QuestionForm(db.Model):
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
     cockroaches = db.Column(db.Boolean)
 
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # 🔁 changed from added_by (string) to user_id (int)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id')) 
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     last_updated = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     location = db.relationship('Location', backref=db.backref('forms', lazy=True))
-    user = db.relationship('User', backref=db.backref('forms', lazy=True))  # ✅ relationship to User
+    user = db.relationship('User', backref=db.backref('forms', lazy=True)) 
