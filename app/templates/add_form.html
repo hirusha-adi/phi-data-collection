@@ -6,28 +6,114 @@
   <div class="card bg-base-100 shadow-xl">
     <div class="card-body space-y-4">
       <h2 class="text-2xl font-bold text-center">📝 New Inspection</h2>
-      
-      <form method="POST" class="space-y-4">
+
+      <form method="POST" class="space-y-6">
         <div>
-          <label for="location" class="label text-sm font-medium">Select Location</label>
-          <select name="location" id="location" class="select select-bordered w-full" required>
-            <option value="" disabled selected>-- Choose a Location --</option>
+          <label class="label font-medium">Select Location</label>
+          <select name="location" class="select select-bordered w-full" required>
+            <option value="" disabled selected>-- Choose Location --</option>
             {% for location in locations %}
-              <option value="{{ location.id }}">{{ location.name }}, {{ location.area.name }}</option>
+            <option value="{{ location.id }}">{{ location.name_of_premise }} - {{ location.area.name }}</option>
             {% endfor %}
           </select>
         </div>
 
+        <h4 class="font-semibold mt-6">General Details</h4>
+        {% for field in [
+        ('premises_registered', 'Premises registered under regulation'),
+        ('certificate_displayed', 'Registration certificate displayed'),
+        ('not_convicted', 'Not convicted within one year'),
+        ('food_not_destroyed', 'Food not destroyed within one year')
+        ] %}
         <div>
-          <label for="cockroaches" class="label text-sm font-medium">Cockroach Presence</label>
-          <select name="cockroaches" id="cockroaches" class="select select-bordered w-full" required>
-            <option value="True">Yes</option>
-            <option value="False">No</option>
+          <label class="label">{{ field[1] }}</label>
+          <select name="{{ field[0] }}" class="select select-bordered w-full" required>
+            <option value="5">Yes (5)</option>
+            <option value="0" selected>No (0)</option>
           </select>
         </div>
+        {% endfor %}
 
-        <button type="submit" class="btn btn-primary w-full">💾 Save Inspection</button>
+        <h4 class="font-semibold mt-6">Building Details</h4>
+        {% for field in [
+        ('safe_water', 'Safe water'),
+        ('cleanliness', 'Cleanliness and cleaning'),
+        ('pests_animals', 'Pests and animals'),
+        ('sound_pollution', 'Sound pollution'),
+        ('toilets_cleanliness', 'Toilets cleanliness')
+        ] %}
+        <div>
+          <label class="label">{{ field[1] }}</label>
+          <select name="{{ field[0] }}" class="select select-bordered w-full" required>
+            <option value="4">Good (4)</option>
+            <option value="2">Statisfactory (2)</option>
+            <option value="0" selected>Bad (0)</option>
+          </select>
+        </div>
+        {% endfor %}
+
+        <h4 class="font-semibold mt-6">Food Handlers</h4>
+        {% for field in [
+        ('medical_certificates', 'Medical certificates'),
+        ('proper_clothing', 'Hair net, mask, gloves, shoes'),
+        ('unhygienic_behaviour', 'Unhygienic behaviour'),
+        ('clean_utensils', 'Use clean utensils to serve food')
+        ] %}
+        <div>
+          <label class="label">{{ field[1] }}</label>
+          <select name="{{ field[0] }}" class="select select-bordered w-full" required>
+            <option value="5">Good (5)</option>
+            <option value="2">Statisfactory (2)</option>
+            <option value="0" selected>Bad (0)</option>
+          </select>
+        </div>
+        {% endfor %}
+
+        <h4 class="font-semibold mt-6">Processing and Serving</h4>
+        {% for field in [
+        ('walls_hygienic', 'Walls hygienic'),
+        ('floor_hygienic', 'Floor hygienic'),
+        ('ceiling_hygienic', 'Ceiling hygienic'),
+        ('food_surfaces_clean', 'Food-contact surfaces clean'),
+        ('wastewater_disposal', 'Wastewater sanitary disposal'),
+        ('closed_bins', 'All bins closed')
+        ] %}
+        <div>
+          <label class="label">{{ field[1] }}</label>
+          <select name="{{ field[0] }}" class="select select-bordered w-full" required>
+            {% if field[0] in ['wastewater_disposal', 'closed_bins'] %}
+            <option value="5">Yes (5)</option>
+            <option value="0" selected>No (0)</option>
+            {% else %}
+            <option value="4">Good (4)</option>
+            <option value="2">Statisfactory (2)</option>
+            <option value="0" selected>Bad (0)</option>
+            {% endif %}
+          </select>
+        </div>
+        {% endfor %}
+
+        <h4 class="font-semibold mt-6">Food Storage</h4>
+        {% for field in [
+        ('cooked_food_closed', 'Cooked food kept closed'),
+        ('cooked_food_temp', '2/4 temperature rule'),
+        ('cooked_food_container', 'Stored in food-grade container'),
+        ('cooked_food_contam_prevented', 'Contamination prevented'),
+        ('uncooked_food_contam_prevented', 'Uncooked food contamination prevented')
+        ] %}
+        <div>
+          <label class="label">{{ field[1] }}</label>
+          <select name="{{ field[0] }}" class="select select-bordered w-full" required>
+            <option value="4">Good (4)</option>
+            <option value="2">Statisfactory (2)</option>
+            <option value="0" selected>Bad (0)</option>
+          </select>
+        </div>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-primary w-full mt-6">💾 Submit Inspection</button>
       </form>
+
 
       <a href="{{ url_for('main.dashboard') }}" class="btn btn-ghost w-full">⬅ Back to Dashboard</a>
     </div>

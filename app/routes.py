@@ -52,19 +52,43 @@ def add_form():
     if request.method == 'POST':
         try:
             location_id = int(request.form.get('location'))
-            cockroaches_value = request.form.get('cockroaches')  # 'True' or 'False' as strings
-            cockroaches = cockroaches_value == 'True'
+            kwargs = {
+                'premises_registered': int(request.form.get('premises_registered')),
+                'certificate_displayed': int(request.form.get('certificate_displayed')),
+                'not_convicted': int(request.form.get('not_convicted')),
+                'food_not_destroyed': int(request.form.get('food_not_destroyed')),
+                'safe_water': int(request.form.get('safe_water')),
+                'cleanliness': int(request.form.get('cleanliness')),
+                'pests_animals': int(request.form.get('pests_animals')),
+                'sound_pollution': int(request.form.get('sound_pollution')),
+                'toilets_cleanliness': int(request.form.get('toilets_cleanliness')),
+                'medical_certificates': int(request.form.get('medical_certificates')),
+                'proper_clothing': int(request.form.get('proper_clothing')),
+                'unhygienic_behaviour': int(request.form.get('unhygienic_behaviour')),
+                'clean_utensils': int(request.form.get('clean_utensils')),
+                'walls_hygienic': int(request.form.get('walls_hygienic')),
+                'floor_hygienic': int(request.form.get('floor_hygienic')),
+                'ceiling_hygienic': int(request.form.get('ceiling_hygienic')),
+                'food_surfaces_clean': int(request.form.get('food_surfaces_clean')),
+                'wastewater_disposal': int(request.form.get('wastewater_disposal')),
+                'closed_bins': int(request.form.get('closed_bins')),
+                'cooked_food_closed': int(request.form.get('cooked_food_closed')),
+                'cooked_food_temp': int(request.form.get('cooked_food_temp')),
+                'cooked_food_container': int(request.form.get('cooked_food_container')),
+                'cooked_food_contam_prevented': int(request.form.get('cooked_food_contam_prevented')),
+                'uncooked_food_contam_prevented': int(request.form.get('uncooked_food_contam_prevented')),
+                'location_id': location_id,
+                'user_id': current_user.id
+            }
 
-            q = QuestionForm(
-                location_id=location_id,
-                cockroaches=cockroaches,
-                user_id=current_user.id
-            )
-            db.session.add(q)
+            form = QuestionForm(**kwargs)
+            db.session.add(form)
             db.session.commit()
+            flash("Inspection form submitted successfully!", "success")
             return redirect(url_for('main.dashboard'))
-        except (TypeError, ValueError):
-            flash("Invalid input. Please try again.", "error")
+
+        except Exception as e:
+            flash("Invalid form input. Please correct and try again.", "error")
 
     return render_template('add_form.html', locations=locations)
 
