@@ -25,21 +25,24 @@
 
   <!-- Locations -->
   <h3 class="text-lg font-semibold mb-3">Recently added locations</h3>
-  <div class="bg-base-100 rounded-box mb-6 divide-y divide-base-300 max-h-60 overflow-y-auto shadow">
-    <ul class="menu">
+  <div class="bg-base-100 rounded-box mb-6 divide-y divide-base-300 max-h-60 overflow-y-auto shadow w-full">
+    <ul class="menu w-full">
       {% for location in locations %}
-        <li>
-          <a href="{{ url_for('main.view_forms', location_id=location.id) }}" class="flex items-center justify-between px-4 py-3 hover:bg-base-200">
-            <span>📍 {{ location.name_and_address_of_establishment }}</span>
-            <span class="text-xs text-gray-500">{{ location.area.name }}</span>
+        <li class="w-full">
+          <a href="{{ url_for('main.view_forms', location_id=location.id) }}"
+            class="flex flex-col w-full px-4 py-3 hover:bg-base-200">
+            <div class="flex justify-between items-center w-full">
+              <span class="font-bold">📍 {{ location.name_of_premise }}</span>
+              <span class="badge badge-outline text-xs">{{ location.area.name }}</span>
+            </div>
+            <span class="text-xs text-gray-500 my-0 py-0">{{ location.address_of_premise }}</span>
           </a>
         </li>
       {% else %}
-        <li class="px-4 py-3 text-gray-400">No locations found.</li>
+        <li class="px-4 py-3 text-gray-400 w-full">No locations found.</li>
       {% endfor %}
     </ul>
   </div>
-
 
   <!-- Inspection Forms -->
   <h3 class="text-lg font-semibold mb-3">Recent inspections</h3>
