@@ -1,32 +1,61 @@
 {% extends "layout.html" %}
 {% block title %}Dashboard{% endblock %}
 {% block content %}
-<div class="flex justify-between items-center mb-4">
-  <h2 class="text-xl font-bold">Dashboard</h2>
-  <a href="{{ url_for('main.logout') }}" class="btn btn-sm btn-error">Logout</a>
+
+<div class="min-h-screen px-4 py-6 bg-base-200">
+
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-2xl font-bold text-primary">Dashboard</h2>
+    <a href="{{ url_for('main.logout') }}" class="btn btn-sm btn-error">Logout</a>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="space-y-3 mb-6">
+    <a href="{{ url_for('main.add_form') }}" class="btn btn-success w-full">➕ New Inspection</a>
+    <a href="{{ url_for('main.add_location') }}" class="btn btn-primary w-full">➕ Add New Location</a>
+    <!-- DO NOT TOUCH THIS LINK -->
+    <a href="{{ url_for('main.add_location') }}" class="btn btn-outline w-full">📍 All Locations</a>
+  </div>
+
+  <!-- Locations -->
+<h3 class="text-lg font-semibold mb-3">Recently added locations</h3>
+<div class="bg-base-100 rounded-box mb-6 divide-y divide-base-300 max-h-60 overflow-y-auto shadow">
+  <ul class="menu">
+    {% for location in locations %}
+      <li>
+        <a href="{{ url_for('main.view_forms', location_id=location.id) }}" class="flex items-center justify-between px-4 py-3 hover:bg-base-200">
+          <span>📍 {{ location.name }}</span>
+          <span class="text-xs text-gray-500">{{ location.area.name }}</span>
+        </a>
+      </li>
+    {% else %}
+      <li class="px-4 py-3 text-gray-400">No locations found.</li>
+    {% endfor %}
+  </ul>
 </div>
 
-<a href="{{ url_for('main.add_form') }}" class="btn btn-success w-full mb-4">+ New Inspection</a>
 
-<h3 class="text-lg font-semibold mb-2">Locations</h3>
-<ul class="menu bg-base-100 rounded-box">
-  <a href="{{ url_for('main.add_location') }}" class="btn btn-primary w-full mt-4">➕ Add New Location</a>
-  {% for location in locations %}
-    <li>
-      <a href="{{ url_for('main.view_forms', location_id=location.id) }}">
-        📍 {{ location.name }} ({{ location.area.name }})
-      </a>
-    </li>
-  {% else %}
-    <li><span>No locations found.</span></li>
-  {% endfor %}
-</ul>
+  <!-- Inspection Forms -->
+  <h3 class="text-lg font-semibold mb-3">Recent inspections</h3>
+  <ul class="space-y-3">
+    {% for form in forms %}
+      <div class="collapse collapse-arrow border border-base-300 rounded-lg bg-base-100">
+        <input type="radio" name="accordion" {% if loop.first %}checked{% endif %} />
+        <div class="collapse-title font-medium text-sm">
+          {{ form.location.name }}, {{ form.location.area.name }} <br>
+          <span class="text-xs text-gray-500">{{ form.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+        </div>
+        <div class="collapse-content text-sm">
+          <p><strong>Cockroaches:</strong> {{ 'Yes' if form.cockroaches else 'No' }}</p>
+          <p><strong>By:</strong> {{ form.user.name }}</p>
+          <p><strong>Last Updated:</strong> {{ form.last_updated.strftime('%Y-%m-%d %H:%M') }}</p>
+          <a href="{{ url_for('main.edit_form', form_id=form.id) }}" class="btn btn-sm btn-outline btn-primary mt-3">✏️ Edit</a>
+        </div>
+      </div>
+    {% endfor %}
+  </ul>
 
-
-<ul>
-  {% for form in forms %}
-  <li>🕒 {{ form.created_at.strftime('%Y-%m-%d %H:%M') }} - {{ form.location.name }}, {{ form.location.area.name }}</li>
-  {% endfor %}
-</ul>
+</div>
 
 {% endblock %}
