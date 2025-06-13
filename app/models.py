@@ -58,6 +58,7 @@ class QuestionForm(db.Model):
     toilets_cleanliness = db.Column(db.Integer, nullable=False)
 
     # Food Handler
+    # (optional) - set to -1
     is_eligigible_food_handler_info = db.Column(db.Boolean, nullable=False)
     medical_certificates = db.Column(db.Integer, nullable=False)
     proper_clothing = db.Column(db.Integer, nullable=False)
@@ -65,7 +66,7 @@ class QuestionForm(db.Model):
     clean_utensils = db.Column(db.Integer, nullable=False)
 
     # Processing and Serving
-    # TODO:
+    # (optional) - set to -1
     is_eligible_processing_info = db.Column(db.Boolean, nullable=False)
     walls_hygienic = db.Column(db.Integer, nullable=False)
     floor_hygienic = db.Column(db.Integer, nullable=False)
@@ -75,12 +76,13 @@ class QuestionForm(db.Model):
     closed_bins = db.Column(db.Integer, nullable=False)
 
     # Food Storage
-    # TODO:
+    # (optional) - set to -1
     is_eligible_food_storage_info = db.Column(db.Boolean, nullable=False)
     cooked_food_closed = db.Column(db.Integer, nullable=False)
     cooked_food_temp = db.Column(db.Integer, nullable=False)
     cooked_food_container = db.Column(db.Integer, nullable=False)
     cooked_food_contam_prevented = db.Column(db.Integer, nullable=False)
+    # (required)
     uncooked_food_contam_prevented = db.Column(db.Integer, nullable=False)
 
     # Inspection Record - Location relationship
