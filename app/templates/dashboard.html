@@ -44,11 +44,14 @@
         <input type="radio" name="accordion" {% if loop.first %}checked{% endif %} />
         <div class="collapse-title font-medium text-sm">
           {{ form.location.name }}, {{ form.location.area.name }} <br>
-          <span class="text-xs text-gray-500">{{ form.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+          <span class="text-xs text-gray-500">
+            on {{ form.created_at.strftime('%Y-%m-%d %H:%M') }}
+            <br>
+            by {{ form.user.name }}
+          </span>
         </div>
         <div class="collapse-content text-sm">
           <p><strong>Cockroaches:</strong> {{ 'Yes' if form.cockroaches else 'No' }}</p>
-          <p><strong>By:</strong> {{ form.user.name }}</p>
           <p><strong>Last Updated:</strong> {{ form.last_updated.strftime('%Y-%m-%d %H:%M') }}</p>
           <a href="{{ url_for('main.edit_form', form_id=form.id) }}" class="btn btn-sm btn-outline btn-primary mt-3">✏️ Edit</a>
         </div>
