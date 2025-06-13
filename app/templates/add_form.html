@@ -4,20 +4,11 @@
 <h2 class="text-xl font-bold mb-4">New Inspection Form</h2>
 <form method="POST">
   <div class="form-control mb-2">
-    <label for="area" class="label">Area</label>
-    <select name="area" id="area" class="select select-bordered w-full" required>
-      <option value="" disabled selected>-- Select Area --</option>
-      {% for area in areas %}
-        <option value="{{ area.id }}">{{ area.name }}</option>
-      {% endfor %}
-    </select>
-  </div>
-  <div class="form-control mb-2">
     <label for="location" class="label">Location</label>
     <select name="location" id="location" class="select select-bordered w-full" required>
       <option value="" disabled selected>-- Select Location --</option>
       {% for location in locations %}
-        <option value="{{ location.id }}">{{ location.name }}</option>
+        <option value="{{ location.id }}">{{ location.name }}, {{ location.area.name }}</option>
       {% endfor %}
     </select>
   </div>

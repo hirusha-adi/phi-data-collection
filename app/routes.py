@@ -51,13 +51,11 @@ def add_form():
 
     if request.method == 'POST':
         try:
-            area_id = int(request.form.get('area'))
             location_id = int(request.form.get('location'))
             cockroaches_value = request.form.get('cockroaches')  # 'True' or 'False' as strings
             cockroaches = cockroaches_value == 'True'
 
             q = QuestionForm(
-                area_id=area_id,
                 location_id=location_id,
                 cockroaches=cockroaches,
                 added_by=current_user.username
@@ -68,7 +66,7 @@ def add_form():
         except (TypeError, ValueError):
             flash("Invalid input. Please try again.", "error")
 
-    return render_template('add_form.html', areas=areas, locations=locations)
+    return render_template('add_form.html', locations=locations)
 
 
 @main.route('/forms/<int:location_id>')
@@ -85,17 +83,14 @@ def edit_form(form_id):
         flash("You can only edit your own entries.")
         return redirect(url_for('main.dashboard'))
 
-    areas = Area.query.all()
     locations = Location.query.all()
 
     if request.method == 'POST':
         try:
-            area_id = int(request.form.get('area'))
             location_id = int(request.form.get('location'))
             cockroaches_value = request.form.get('cockroaches')  # 'True' or 'False'
             cockroaches = cockroaches_value == 'True'
 
-            form_record.area_id = area_id
             form_record.location_id = location_id
             form_record.cockroaches = cockroaches
             db.session.commit()
@@ -103,7 +98,7 @@ def edit_form(form_id):
         except (TypeError, ValueError):
             flash("Invalid input. Please try again.", "error")
 
-    return render_template('edit_form.html', form_record=form_record, areas=areas, locations=locations)
+    return render_template('edit_form.html', form_record=form_record, locations=locations)
 
 
 
