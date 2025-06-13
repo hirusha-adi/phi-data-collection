@@ -58,7 +58,7 @@ def add_form():
             q = QuestionForm(
                 location_id=location_id,
                 cockroaches=cockroaches,
-                added_by=current_user.username
+                user_id=current_user.id
             )
             db.session.add(q)
             db.session.commit()

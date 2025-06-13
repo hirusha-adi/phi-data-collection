@@ -25,13 +25,13 @@ class Location(db.Model):
 
 class QuestionForm(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    area_id = db.Column(db.Integer, db.ForeignKey('area.id'))
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
     cockroaches = db.Column(db.Boolean)
-    added_by = db.Column(db.String(50))
+
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # 🔁 changed from added_by (string) to user_id (int)
+
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     last_updated = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    # ✅ Add these relationships:
-    area = db.relationship('Area', backref=db.backref('forms', lazy=True))
     location = db.relationship('Location', backref=db.backref('forms', lazy=True))
+    user = db.relationship('User', backref=db.backref('forms', lazy=True))  # ✅ relationship to User

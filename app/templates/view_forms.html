@@ -7,14 +7,14 @@
     <li class="border-b border-base-300">
       <div class="flex flex-col gap-1 p-2">
         <span>🕒 {{ form.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
-        <span>Area: {{ form.area.name }}</span>
+        <span>Area: {{ form.location.area.name }}</span>
         <span>Location: {{ form.location.name }}</span>
         <span>Cockroaches: 
           <span class="font-bold {% if form.cockroaches %}text-error{% else %}text-success{% endif %}">
             {% if form.cockroaches %}Yes{% else %}No{% endif %}
           </span>
         </span>
-        <span>By: {{ form.added_by }}</span>
+        <span>By: {{ form.user.name }}</span>
 
         <div class="flex gap-2 mt-2">
           {% if form.added_by == current_user.username %}
