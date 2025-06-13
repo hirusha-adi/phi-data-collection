@@ -1,33 +1,47 @@
 {% extends "layout.html" %}
 {% block title %}Form Records{% endblock %}
 {% block content %}
-<h2 class="text-xl font-bold mb-4">Inspection Records</h2>
-<ul class="menu bg-base-100 rounded-box">
-  {% for form in forms %}
-    <li class="border-b border-base-300">
-      <div class="flex flex-col gap-1 p-2">
-        <span>🕒 {{ form.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
-        <span>Area: {{ form.location.area.name }}</span>
-        <span>Location: {{ form.location.name }}</span>
-        <span>Cockroaches: 
-          <span class="font-bold {% if form.cockroaches %}text-error{% else %}text-success{% endif %}">
-            {% if form.cockroaches %}Yes{% else %}No{% endif %}
-          </span>
-        </span>
-        <span>By: {{ form.user.name }}</span>
 
-        <div class="flex gap-2 mt-2">
-          {% if form.added_by == current_user.username %}
-            <a href="{{ url_for('main.edit_form', form_id=form.id) }}" class="btn btn-xs btn-warning">Edit</a>
-            <a href="{{ url_for('main.delete_form', form_id=form.id) }}" class="btn btn-xs btn-error"
-              onclick="return confirm('Are you sure you want to delete this?')">Delete</a>
-          {% endif %}
+<div class="max-w-md mx-auto px-4 py-6">
+  <h2 class="text-xl font-bold mb-6 text-center">📋 Inspection Records</h2>
+
+  {% if forms %}
+    <div class="space-y-4">
+      {% for form in forms %}
+        <div class="collapse collapse-arrow border border-base-300 rounded-lg bg-base-100 shadow-sm">
+          <input type="radio" name="accordion" {% if loop.first %}checked{% endif %} />
+          <div class="collapse-title font-medium text-sm">
+            {{ form.location.name }}, {{ form.location.area.name }}
+            <br>
+            <span class="text-xs text-gray-500">
+              🕒 {{ form.created_at.strftime('%Y-%m-%d %H:%M') }} <br>
+              👤 {{ form.user.name }}
+            </span>
+          </div>
+          <div class="collapse-content text-sm space-y-2">
+            <p><strong>Cockroaches:</strong>
+              <span class="{% if form.cockroaches %}text-error{% else %}text-success{% endif %} font-semibold">
+                {{ 'Yes' if form.cockroaches else 'No' }}
+              </span>
+            </p>
+            <p><strong>Last Updated:</strong> {{ form.last_updated.strftime('%Y-%m-%d %H:%M') }}</p>
+
+            {% if form.user.id == current_user.id %}
+              <div class="flex gap-2 mt-3">
+                <a href="{{ url_for('main.edit_form', form_id=form.id) }}" class="btn btn-sm btn-outline btn-primary">✏️ Edit</a>
+                <a href="{{ url_for('main.delete_form', form_id=form.id) }}" class="btn btn-sm btn-outline btn-error"
+                   onclick="return confirm('Are you sure you want to delete this?')">🗑 Delete</a>
+              </div>
+            {% endif %}
+          </div>
         </div>
-      </div>
-    </li>
+      {% endfor %}
+    </div>
   {% else %}
-    <li><span>No forms available.</span></li>
-  {% endfor %}
-</ul>
-<a href="{{ url_for('main.dashboard') }}" class="btn btn-ghost mt-4">← Back to Dashboard</a>
+    <p class="text-center text-gray-400">No inspection forms available.</p>
+  {% endif %}
+
+  <a href="{{ url_for('main.dashboard') }}" class="btn btn-ghost mt-6 w-full">← Back to Dashboard</a>
+</div>
+
 {% endblock %}
