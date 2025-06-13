@@ -9,9 +9,11 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(200))
     last_accessed = db.Column(db.DateTime, default=datetime.utcnow)
 
+
 class Area(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True)
+
 
 class Location(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -35,15 +37,18 @@ class Location(db.Model):
     contact_number = db.Column(db.String(20), nullable=False)  # Contact of premise
     owner_contact_number = db.Column(db.String(20), nullable=False)  # Contact of owner
     
+    
 class QuestionForm(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
     cockroaches = db.Column(db.Boolean)
-
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id')) 
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     last_updated = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    # Inspection Record - Location relationship
+    location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
     location = db.relationship('Location', backref=db.backref('forms', lazy=True))
+    
+    # Inspection Record - User relationship (see who created it)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id')) 
     user = db.relationship('User', backref=db.backref('forms', lazy=True)) 

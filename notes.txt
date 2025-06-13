@@ -1,18 +1,27 @@
-New location:
-- phi_area:
-- name of premise
-- address of premise
-- gs_area: 
-- owner_name
-- owner_nic
-- owner_address
-- contact_number of premise
-- owner_contact_number
-- category_of_premise
+this is my old
 
+class QuestionForm(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    cockroaches = db.Column(db.Boolean)
+
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    last_updated = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Inspection Record - Location relationship
+    location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
+    location = db.relationship('Location', backref=db.backref('forms', lazy=True))
+    
+    # Inspection Record - User relationship (see who created it)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id')) 
+    user = db.relationship('User', backref=db.backref('forms', lazy=True)) 
+
+
+below are the changes i want to make
 
 Question Form
 it will be based on a scoring system
+store all these questions in this single table (as fields)
+use suitable data types as names for fields
 
 general details
 - Premises registered under the regulation (yes: 5, no: 0)
@@ -48,3 +57,4 @@ Food storage
 - Cooked perishable food - Contamination prevented (no: 0, mediocre: 2, yes: 4) 
 - Uncooked food - Contamination prevented (no: 0, mediocre: 2, yes: 4) 
 
+Also, write me the frotnend code
