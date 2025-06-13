@@ -5,20 +5,20 @@
 <div class="max-w-md mx-auto px-4 py-6">
   <h2 class="text-xl font-bold mb-6 text-center">📋 Inspection Records</h2>
 
-  <h2 class="mt-4 mb-3 text-lg font-bold">of {{ location.name_and_address_of_establishment }}</h2>
+  <h2 class="mt-4 mb-3 text-lg font-bold">of {{ location.name_of_premise }}</h2>
   <div class="card bg-base-100 shadow-sm mb-16">
     <div class="card-body">
       <p>
-        <strong>0. Area:-</strong> {{ location.area.name }} <br><br>
-        <strong>1. Name of the owner:-</strong> <br>{{ location.name_of_owner }} <br><br>
-        <strong>2. Private address:-</strong> <br> {{ location.private_address }} <br><br>
-        <strong>3. NIC number:-</strong> <br>{{ location.nic_number }} <br><br>
-        <strong>4. Telephone number:-</strong> <br> {{ location.telephone_number }} <br><br>
-        <strong>5. Name & Address of the establishment:-</strong> <br> {{ location.name_and_address_of_establishment }} <br><br>
-        <strong>6. Address of the legal owner of premises:-</strong> <br> {{ location.address_of_legal_owner }} <br><br>
-        <strong>7. If licensed by the Local Authority, Number and Year:-</strong> <br> {{ location.if_liscened_details }} <br><br>
-        <strong>8. Business Registration No:-</strong> <br> {{ location.bussiness_registration_number }} <br><br>
-        <strong>9. Number of employees:-</strong> <br> {{ location.number_of_employees }} <br><br>
+        <strong>PHI Area:-</strong> {{ location.area.name }} <br><br>
+        <strong>Grama Sevaka Area:-</strong> <br>{{ location.gs_area }} <br><br>
+        <strong>Name of the premise:-</strong> <br>{{ location.name_of_premise }} <br><br>
+        <strong>Address of the premise:-</strong> <br>{{ location.address_of_premise }} <br><br>
+        <strong>Category of the premise:-</strong> <br>{{ location.category_of_premise }} <br><br>
+        <strong>Name of the owner:-</strong> <br>{{ location.owner_name }} <br><br>
+        <strong>NIC number:-</strong> <br>{{ location.owner_nic }} <br><br>
+        <strong>Address of the owner:-</strong> <br>{{ location.owner_address }} <br><br>
+        <strong>Telephone number of the premise:-</strong> <br>{{ location.contact_number }} <br><br>
+        <strong>Telephone number of the owner:-</strong> <br>{{ location.owner_contact_number }} <br><br>
       </p>
     </div>
   </div>
