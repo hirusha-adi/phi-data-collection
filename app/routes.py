@@ -121,22 +121,40 @@ def add_location():
 
     if request.method == 'POST':
         area_id = request.form.get('area_id', type=int)
-        location_name = request.form.get('location_name', '').strip()
-        owner_name = request.form.get('owner_name', '').strip()
-        contact_number = request.form.get('contact_number', '').strip()
+        name_of_owner = request.form.get('name_of_owner', '').strip()
+        private_address = request.form.get('private_address', '').strip()
+        nic_number = request.form.get('nic_number', '').strip()
+        telephone_number = request.form.get('telephone_number', '').strip()
+        name_and_address_of_establishment = request.form.get('name_and_address_of_establishment', '').strip()
+        address_of_legal_owner = request.form.get('address_of_legal_owner', '').strip()
+        if_liscened_details = request.form.get('if_liscened_details', '').strip()
+        bussiness_registration_number = request.form.get('bussiness_registration_number', '').strip()
+        number_of_employees = request.form.get('number_of_employees', '').strip()
 
-        if area_id and location_name and owner_name and contact_number:
+        
+        print(all([area_id, name_of_owner, private_address, nic_number, telephone_number,
+                name_and_address_of_establishment, address_of_legal_owner, number_of_employees]))
+        
+        if all([area_id, name_of_owner, private_address, nic_number, telephone_number,
+                name_and_address_of_establishment, address_of_legal_owner, number_of_employees]):
             new_location = Location(
                 area_id=area_id,
-                name=location_name,
-                owner_name=owner_name,
-                contact_number=contact_number
+                name_of_owner=name_of_owner,
+                private_address=private_address,
+                nic_number=nic_number,
+                telephone_number=telephone_number,
+                name_and_address_of_establishment=name_and_address_of_establishment,
+                address_of_legal_owner=address_of_legal_owner,
+                if_liscened_details=if_liscened_details,
+                bussiness_registration_number=bussiness_registration_number,
+                number_of_employees=number_of_employees
             )
             db.session.add(new_location)
             db.session.commit()
             flash("Location added successfully!", "success")
             return redirect(url_for('main.dashboard'))
         else:
-            flash("All fields are required.", "error")
+            flash("Please fill in all required fields.", "error")
 
     return render_template('add_location.html', areas=areas)
+
