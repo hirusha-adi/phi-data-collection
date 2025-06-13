@@ -40,7 +40,7 @@ def logout():
 @main.route('/dashboard')
 @login_required
 def dashboard():
-    locations = Location.query.all()
+    locations = Location.query.limit(10).all()
     forms = QuestionForm.query.order_by(QuestionForm.created_at.desc()).limit(10).all()
     return render_template('dashboard.html', locations=locations, forms=forms)
 
@@ -79,7 +79,7 @@ def view_forms(location_id):
 @login_required
 def edit_form(form_id):
     form_record = QuestionForm.query.get_or_404(form_id)
-    if form_record.added_by != current_user.username:
+    if form_record.user.id != current_user.id:
         flash("You can only edit your own entries.")
         return redirect(url_for('main.dashboard'))
 
@@ -106,7 +106,7 @@ def edit_form(form_id):
 @login_required
 def delete_form(form_id):
     form_record = QuestionForm.query.get_or_404(form_id)
-    if form_record.added_by != current_user.username:
+    if form_record.user.id != current_user.id:
         flash("Unauthorized deletion")
         return redirect(url_for('main.dashboard'))
     db.session.delete(form_record)
