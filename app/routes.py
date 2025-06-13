@@ -73,7 +73,8 @@ def add_form():
 @login_required
 def view_forms(location_id):
     forms = QuestionForm.query.filter_by(location_id=location_id).all()
-    return render_template('view_forms.html', forms=forms)
+    location = Location.query.get_or_404(location_id)
+    return render_template('view_forms.html', forms=forms, location=location)
 
 @main.route('/edit_form/<int:form_id>', methods=['GET', 'POST'])
 @login_required

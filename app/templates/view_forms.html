@@ -5,7 +5,21 @@
 <div class="max-w-md mx-auto px-4 py-6">
   <h2 class="text-xl font-bold mb-6 text-center">📋 Inspection Records</h2>
 
+  <div class="card bg-base-100 shadow-sm">
+    <div class="card-body">
+      <h2 class="card-title">{{ location.name }}</h2>
+      <p>
+        <strong>Area:</strong> {{ location.area.name }} <br>
+        <strong>Owner Name:</strong> {{ location.owner_name }} <br>
+        <strong>Contact Number:</strong> {{ location.contact_number }}
+      </p>
+    </div>
+  </div>
+
   {% if forms %}
+    <div class="mt-5 mb-3 text-lg">
+      <strong>Total inspections: {{ forms|length }}</strong>
+    </div>
     <div class="space-y-4">
       {% for form in forms %}
         <div class="collapse collapse-arrow border border-base-300 rounded-lg bg-base-100 shadow-sm">
