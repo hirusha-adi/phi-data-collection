@@ -1,23 +1,50 @@
-Update the location: (all text)
-- name_of_owner
-- private_address
-- nic_number
-- telephone_number
-- name_and_address_of_establishment
-- name_and_address_of_legal_owner
-- if_liscened_details
-- bussiness_registration_number
-- number_of_employees
-- keep the area and area_id as it is
+New location:
+- phi_area:
+- name of premise
+- address of premise
+- gs_area: 
+- owner_name
+- owner_nic
+- owner_address
+- contact_number of premise
+- owner_contact_number
+- category_of_premise
 
-below is what I have now:
 
-class Location(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    owner_name = db.Column(db.String(100), nullable=False)
-    contact_number = db.Column(db.String(20), nullable=False)
-    area_id = db.Column(db.Integer, db.ForeignKey('area.id'), nullable=False)
+Question Form
+it will be based on a scoring system
 
-    area = db.relationship('Area', backref=db.backref('locations', lazy=True))
+general details
+- Premises registered under the regulation (yes: 5, no: 0)
+- Registration certificate displayed (yes: 5, no: 0)
+- Not convicted within one year (yes: 5, no: 0)
+- Food not destroyed within one year (yes: 5, no: 0)
+
+building details
+- Safe water: (yes: 4, no: 0)
+- Cleanliness and cleaning (no: 0, mediocre: 2, yes: 4)
+- Pests and animals (no: 0, mediocre: 2, yes: 4)
+- Sound pollution (no: 0, mediocre: 2, yes: 4)
+- Toilets cleanliness (no: 0, mediocre: 2, yes: 4)
+
+food handler
+- Medical certificates (no: 0, mediocre: 2, yes: 5)
+- Hair net/head cap, mask, gloves, slippers/shoes (no: 0, mediocre: 2, yes: 5)
+- Unhygienic behaviour (no: 0, mediocre: 2, yes: 5)
+- Use clean utensils to serve food (no: 0, mediocre: 2, yes: 5)
+
+Processing and serving
+- Walls Hygienic (no: 0, mediocre: 2, yes: 4)
+- Floor Hygienic (no: 0, mediocre: 2, yes: 4)
+- Ceiling Hygienic (no: 0, mediocre: 2, yes: 4)
+- Food-contactable surfaces (no: 0, mediocre: 2, yes: 4)
+- Wastewater (Sanitary disposal of water) (no: 0, yes: 2)
+- Waste bins (All closed) (no: 0, yes: 2)
+
+Food storage
+- Cooked perishable food - Kept closed (no: 0, mediocre: 2, yes: 4) 
+- Cooked perishable food - 2/4 temperature rule (no: 0, mediocre: 2, yes: 4) 
+- Cooked perishable food - Stored in food-grade container (no: 0, mediocre: 2, yes: 4) 
+- Cooked perishable food - Contamination prevented (no: 0, mediocre: 2, yes: 4) 
+- Uncooked food - Contamination prevented (no: 0, mediocre: 2, yes: 4) 
 
