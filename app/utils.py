@@ -10,7 +10,6 @@ def create_default_users():
     
     default_areas = [
         {'name': 'Ambanpola'},
-        {'name': 'Abakolawewa'},
         {'name': 'Keththaphuwa'},
         {'name': 'Borawewa'},
     ]
