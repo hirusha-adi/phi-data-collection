@@ -121,33 +121,38 @@ def add_location():
 
     if request.method == 'POST':
         area_id = request.form.get('area_id', type=int)
-        name_of_owner = request.form.get('name_of_owner', '').strip()
-        private_address = request.form.get('private_address', '').strip()
-        nic_number = request.form.get('nic_number', '').strip()
-        telephone_number = request.form.get('telephone_number', '').strip()
-        name_and_address_of_establishment = request.form.get('name_and_address_of_establishment', '').strip()
-        address_of_legal_owner = request.form.get('address_of_legal_owner', '').strip()
-        if_liscened_details = request.form.get('if_liscened_details', '').strip()
-        bussiness_registration_number = request.form.get('bussiness_registration_number', '').strip()
-        number_of_employees = request.form.get('number_of_employees', '').strip()
+        name_of_premise = request.form.get('name_of_premise', '').strip()
+        address_of_premise = request.form.get('address_of_premise', '').strip()
+        gs_area = request.form.get('gs_area', '').strip()
+        category_of_premise = request.form.get('category_of_premise', '').strip()
+        
+        owner_name = request.form.get('owner_name', '').strip()
+        owner_nic = request.form.get('owner_nic', '').strip()
+        owner_address = request.form.get('owner_address', '').strip()
+        
+        contact_number = request.form.get('contact_number', '').strip()
+        owner_contact_number = request.form.get('owner_contact_number', '').strip()
 
+        print(all([
+            area_id, name_of_premise, address_of_premise, gs_area, category_of_premise,
+            owner_name, owner_nic, owner_address, contact_number, owner_contact_number
+        ]))
         
-        print(all([area_id, name_of_owner, private_address, nic_number, telephone_number,
-                name_and_address_of_establishment, address_of_legal_owner, number_of_employees]))
-        
-        if all([area_id, name_of_owner, private_address, nic_number, telephone_number,
-                name_and_address_of_establishment, address_of_legal_owner, number_of_employees]):
+        if all([
+            area_id, name_of_premise, address_of_premise, gs_area, category_of_premise,
+            owner_name, owner_nic, owner_address, contact_number, owner_contact_number
+        ]):
             new_location = Location(
                 area_id=area_id,
-                name_of_owner=name_of_owner,
-                private_address=private_address,
-                nic_number=nic_number,
-                telephone_number=telephone_number,
-                name_and_address_of_establishment=name_and_address_of_establishment,
-                address_of_legal_owner=address_of_legal_owner,
-                if_liscened_details=if_liscened_details,
-                bussiness_registration_number=bussiness_registration_number,
-                number_of_employees=number_of_employees
+                name_of_premise=name_of_premise,
+                address_of_premise=address_of_premise,
+                gs_area=gs_area,
+                category_of_premise=category_of_premise,
+                owner_name=owner_name,
+                owner_nic=owner_nic,
+                owner_address=owner_address,
+                contact_number=contact_number,
+                owner_contact_number=owner_contact_number
             )
             db.session.add(new_location)
             db.session.commit()
@@ -157,4 +162,3 @@ def add_location():
             flash("Please fill in all required fields.", "error")
 
     return render_template('add_location.html', areas=areas)
-
