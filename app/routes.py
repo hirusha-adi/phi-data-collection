@@ -126,16 +126,17 @@ def add_location():
         nic_number = request.form.get('nic_number', '').strip()
         telephone_number = request.form.get('telephone_number', '').strip()
         name_and_address_of_establishment = request.form.get('name_and_address_of_establishment', '').strip()
-        name_and_address_of_legal_owner = request.form.get('name_and_address_of_legal_owner', '').strip()
+        address_of_legal_owner = request.form.get('address_of_legal_owner', '').strip()
         if_liscened_details = request.form.get('if_liscened_details', '').strip()
         bussiness_registration_number = request.form.get('bussiness_registration_number', '').strip()
         number_of_employees = request.form.get('number_of_employees', '').strip()
 
+        
         print(all([area_id, name_of_owner, private_address, nic_number, telephone_number,
-                name_and_address_of_establishment, name_and_address_of_legal_owner, number_of_employees]))
+                name_and_address_of_establishment, address_of_legal_owner, number_of_employees]))
         
         if all([area_id, name_of_owner, private_address, nic_number, telephone_number,
-                name_and_address_of_establishment, name_and_address_of_legal_owner, number_of_employees]):
+                name_and_address_of_establishment, address_of_legal_owner, number_of_employees]):
             new_location = Location(
                 area_id=area_id,
                 name_of_owner=name_of_owner,
@@ -143,7 +144,7 @@ def add_location():
                 nic_number=nic_number,
                 telephone_number=telephone_number,
                 name_and_address_of_establishment=name_and_address_of_establishment,
-                name_and_address_of_legal_owner=name_and_address_of_legal_owner,
+                address_of_legal_owner=address_of_legal_owner,
                 if_liscened_details=if_liscened_details,
                 bussiness_registration_number=bussiness_registration_number,
                 number_of_employees=number_of_employees

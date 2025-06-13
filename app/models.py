@@ -26,7 +26,7 @@ class Location(db.Model):
     nic_number = db.Column(db.String(20), nullable=False)
     telephone_number = db.Column(db.String(20), nullable=False)
     name_and_address_of_establishment = db.Column(db.String(200), nullable=False)
-    name_and_address_of_legal_owner = db.Column(db.String(200), nullable=False)
+    address_of_legal_owner = db.Column(db.String(200), nullable=False)
     if_liscened_details = db.Column(db.String(200), nullable=True)  # Optional
     bussiness_registration_number = db.Column(db.String(100), nullable=True)  # Optional
     number_of_employees = db.Column(db.String(50), nullable=False)
