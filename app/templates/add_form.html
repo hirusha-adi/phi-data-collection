@@ -1,27 +1,37 @@
 {% extends "layout.html" %}
 {% block title %}New Inspection{% endblock %}
 {% block content %}
-<h2 class="text-xl font-bold mb-4">New Inspection Form</h2>
-<form method="POST">
-  <div class="form-control mb-2">
-    <label for="location" class="label">Location</label>
-    <select name="location" id="location" class="select select-bordered w-full" required>
-      <option value="" disabled selected>-- Select Location --</option>
-      {% for location in locations %}
-        <option value="{{ location.id }}">{{ location.name }}, {{ location.area.name }}</option>
-      {% endfor %}
-    </select>
+
+<div class="max-w-md mx-auto px-0 py-6 min-h-screen">
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body space-y-4">
+      <h2 class="text-2xl font-bold text-center">📝 New Inspection</h2>
+      
+      <form method="POST" class="space-y-4">
+        <div>
+          <label for="location" class="label text-sm font-medium">Select Location</label>
+          <select name="location" id="location" class="select select-bordered w-full" required>
+            <option value="" disabled selected>-- Choose a Location --</option>
+            {% for location in locations %}
+              <option value="{{ location.id }}">{{ location.name }}, {{ location.area.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div>
+          <label for="cockroaches" class="label text-sm font-medium">Cockroach Presence</label>
+          <select name="cockroaches" id="cockroaches" class="select select-bordered w-full" required>
+            <option value="True">Yes</option>
+            <option value="False">No</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-full">💾 Save Inspection</button>
+      </form>
+
+      <a href="{{ url_for('main.dashboard') }}" class="btn btn-ghost w-full">⬅ Back to Dashboard</a>
+    </div>
   </div>
-  <div class="form-control mb-4">
-    <label for="cockroaches" class="label">Cockroaches</label>
-    <select name="cockroaches" id="cockroaches" class="select select-bordered w-full" required>
-      <option value="True">Yes</option>
-      <option value="False">No</option>
-    </select>
-  </div>
-  <div class="form-control">
-    <button type="submit" class="btn btn-primary">Save</button>
-  </div>
-</form>
-<a href="{{ url_for('main.dashboard') }}" class="btn btn-ghost mt-4">← Back to Dashboard</a>
+</div>
+
 {% endblock %}
