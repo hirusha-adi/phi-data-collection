@@ -20,7 +20,6 @@ def create_app():
 
     with app.app_context():
         db.create_all()
-        # ↓ move import here to avoid circular dependency
         from .utils import create_default_users
         create_default_users()
 
