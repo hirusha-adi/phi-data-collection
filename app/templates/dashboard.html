@@ -10,30 +10,35 @@
     <a href="{{ url_for('main.logout') }}" class="btn btn-sm btn-error">Logout</a>
   </div>
 
+  <!-- Welcome Message -->
+  <div class="items-center justify-between mb-6">
+    <h3 class="text-xl font-bold">Welcome back {{ current_user.name }}!</h3>
+  </div>  
+
   <!-- Action Buttons -->
   <div class="space-y-3 mb-6">
     <a href="{{ url_for('main.add_form') }}" class="btn btn-success w-full">➕ New Inspection</a>
     <a href="{{ url_for('main.add_location') }}" class="btn btn-primary w-full">➕ Add New Location</a>
-    <!-- DO NOT TOUCH THIS LINK -->
+    <!-- TODO: Update this URL -->
     <a href="{{ url_for('main.add_location') }}" class="btn btn-outline w-full">📍 All Locations</a>
   </div>
 
   <!-- Locations -->
-<h3 class="text-lg font-semibold mb-3">Recently added locations</h3>
-<div class="bg-base-100 rounded-box mb-6 divide-y divide-base-300 max-h-60 overflow-y-auto shadow">
-  <ul class="menu">
-    {% for location in locations %}
-      <li>
-        <a href="{{ url_for('main.view_forms', location_id=location.id) }}" class="flex items-center justify-between px-4 py-3 hover:bg-base-200">
-          <span>📍 {{ location.name }}</span>
-          <span class="text-xs text-gray-500">{{ location.area.name }}</span>
-        </a>
-      </li>
-    {% else %}
-      <li class="px-4 py-3 text-gray-400">No locations found.</li>
-    {% endfor %}
-  </ul>
-</div>
+  <h3 class="text-lg font-semibold mb-3">Recently added locations</h3>
+  <div class="bg-base-100 rounded-box mb-6 divide-y divide-base-300 max-h-60 overflow-y-auto shadow">
+    <ul class="menu">
+      {% for location in locations %}
+        <li>
+          <a href="{{ url_for('main.view_forms', location_id=location.id) }}" class="flex items-center justify-between px-4 py-3 hover:bg-base-200">
+            <span>📍 {{ location.name }}</span>
+            <span class="text-xs text-gray-500">{{ location.area.name }}</span>
+          </a>
+        </li>
+      {% else %}
+        <li class="px-4 py-3 text-gray-400">No locations found.</li>
+      {% endfor %}
+    </ul>
+  </div>
 
 
   <!-- Inspection Forms -->
