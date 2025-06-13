@@ -41,12 +41,12 @@ def logout():
 @login_required
 def dashboard():
     locations = Location.query.all()
-    return render_template('dashboard.html', locations=locations)
+    forms = QuestionForm.query.order_by(QuestionForm.created_at.desc()).limit(10).all()
+    return render_template('dashboard.html', locations=locations, forms=forms)
 
 @main.route('/add_form', methods=['GET', 'POST'])
 @login_required
 def add_form():
-    areas = Area.query.all()
     locations = Location.query.all()
 
     if request.method == 'POST':

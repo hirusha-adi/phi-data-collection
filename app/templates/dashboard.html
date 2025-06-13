@@ -21,4 +21,12 @@
     <li><span>No locations found.</span></li>
   {% endfor %}
 </ul>
+
+
+<ul>
+  {% for form in forms %}
+  <li>🕒 {{ form.created_at.strftime('%Y-%m-%d %H:%M') }} - {{ form.location.name }}, {{ form.location.area.name }}</li>
+  {% endfor %}
+</ul>
+
 {% endblock %}
