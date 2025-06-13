@@ -30,7 +30,7 @@
       {% for location in locations %}
         <li>
           <a href="{{ url_for('main.view_forms', location_id=location.id) }}" class="flex items-center justify-between px-4 py-3 hover:bg-base-200">
-            <span>📍 {{ location.name }}</span>
+            <span>📍 {{ location.name_and_address_of_establishment }}</span>
             <span class="text-xs text-gray-500">{{ location.area.name }}</span>
           </a>
         </li>

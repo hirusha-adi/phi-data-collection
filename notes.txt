@@ -1,57 +1,23 @@
-Create a flask app, use authentication with Flask-Login
-use sqlalchemy and sqlite3 database
-use tailwindcss + daisyui for the frontend
-only a mobile view is enough, dont need it to be supported to multiple devices
-it will be used on mobile phones only. 
-This is an information system for the public health inspectors
-the PHIs can login and keep track of records of cleanliness of locations
-they can then create a new form entry (answers to a set of questions)
-the questions are fixed, they wont change
-the areas are fixed, they wont change
-PHIs should be able to create new locations (food shop)
+Update the location: (all text)
+- name_of_owner
+- private_address
+- nic_number
+- telephone_number
+- name_and_address_of_establishment
+- name_and_address_of_legal_owner
+- if_liscened_details
+- bussiness_registration_number
+- number_of_employees
+- keep the area and area_id as it is
 
-PHIs should be able to add a new question form entry for each location.
-They can answer the set of questions and add them to the database
-They should also have the ability to view the previously added questions (by shop)
-When they click on a form entry, they should also be able to update the values
-They should also be able to delete the questions, but only if the current username = question form username
+below is what I have now:
 
+class Location(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    owner_name = db.Column(db.String(100), nullable=False)
+    contact_number = db.Column(db.String(20), nullable=False)
+    area_id = db.Column(db.Integer, db.ForeignKey('area.id'), nullable=False)
 
-Information of each user (PHI)
-------------------
-name (full name)
-username (to login)
-password (to login)
-last_accessed ()
-
-
-Questions    (form)
-------------------
-Name:
-Area: (select from dropdown)
-Location: (select from locations, dropdown)
-Are there cockroaches?: True or False (use radio buttons)
-added_by: username (links back to users table)
-created_at: auto datetime
-last_updated: auto datetime
-
-
-Areas
-------------------
-Area Name
-
-
-Locations
-------------------
-Area (linking to Areas table)
-Location Name
-Owner Name
-Contact Number
-
-
-for each html web page, use these:
-<link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
-<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-
-it will include both daisyui and tailwindcss cdns
+    area = db.relationship('Area', backref=db.backref('locations', lazy=True))
 

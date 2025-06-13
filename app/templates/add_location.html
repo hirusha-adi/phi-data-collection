@@ -6,35 +6,78 @@
   <div class="card bg-base-100 shadow-xl">
     <div class="card-body space-y-4">
       <h1 class="text-2xl font-bold text-center">Add New Location</h1>
-      
+
       <form method="POST" class="space-y-4">
         <div>
           <label class="label text-sm font-medium">Area</label>
           <select name="area_id" class="select select-bordered w-full" required>
             <option disabled selected>Select Area</option>
             {% for area in areas %}
-              <option value="{{ area.id }}">{{ area.name }}</option>
+            <option value="{{ area.id }}">{{ area.name }}</option>
             {% endfor %}
           </select>
         </div>
 
         <div>
-          <label class="label text-sm font-medium">Location Name</label>
-          <input type="text" name="location_name" class="input input-bordered w-full" placeholder="Eg: Supermarket, Hotel..." required />
+          <label class="label text-sm font-medium">Name of the owner</label>
+          <input type="text" name="name_of_owner" class="input input-bordered w-full" placeholder="Owner's full name"
+            required />
         </div>
 
         <div>
-          <label class="label text-sm font-medium">Owner Name</label>
-          <input type="text" name="owner_name" class="input input-bordered w-full" placeholder="Owner's full name" required />
+          <label class="label text-sm font-medium">Private address</label>
+          <input type="text" name="private_address" class="input input-bordered w-full" placeholder="Home address"
+            required />
         </div>
 
         <div>
-          <label class="label text-sm font-medium">Contact Number</label>
-          <input type="text" name="contact_number" class="input input-bordered w-full" placeholder="Eg: 0771234567" required />
+          <label class="label text-sm font-medium">NIC Number</label>
+          <input type="text" name="nic_number" class="input input-bordered w-full" placeholder="Eg: 200512345678"
+            required />
         </div>
 
-        <button type="submit" class="btn btn-primary w-full">💾 Save Location</button>
+        <div>
+          <label class="label text-sm font-medium">Telephone No</label>
+          <input type="text" name="telephone_number" class="input input-bordered w-full" placeholder="Eg: 0771234567"
+            required />
+        </div>
+
+        <div>
+          <label class="label text-sm font-medium">Name & Address of</label>
+          <label class="label text-sm font-medium">the establishment</label>
+          <input type="text" name="name_and_address_of_establishment" class="input input-bordered w-full"
+            placeholder="Eg: ABC Supermarket, Colombo" required />
+        </div>
+
+        <div>
+          <label class="label text-sm font-medium">Name & Address of</label>
+          <label class="label text-sm font-medium">the legal owner of premises</label>
+          <input type="text" name="name_and_address_of_legal_owner" class="input input-bordered w-full"
+            placeholder="Eg: John Doe, Kandy" required />
+        </div>
+
+        <div>
+          <label class="label text-sm font-medium">If licensed by the Local</label>
+          <label class="label text-sm font-medium">Authority, Number and Year</label>
+          <input type="text" name="if_liscened_details" class="input input-bordered w-full"
+            placeholder="License No. / Description" />
+        </div>
+
+        <div>
+          <label class="label text-sm font-medium">Business Registration No</label>
+          <input type="text" name="bussiness_registration_number" class="input input-bordered w-full"
+            placeholder="Eg: BR123456" />
+        </div>
+
+        <div>
+          <label class="label text-sm font-medium">Number of employees</label>
+          <input type="text" name="number_of_employees" class="input input-bordered w-full" placeholder="Eg: 12"
+            required />
+        </div>
+
+        <button type="submit" class="btn btn-primary w-full"> ➕ Add Location</button>
       </form>
+
 
       <a href="{{ url_for('main.dashboard') }}" class="btn btn-ghost w-full">⬅ Back to Dashboard</a>
     </div>
