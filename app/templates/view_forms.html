@@ -1,18 +1,18 @@
 {% extends "layout.html" %}
-{% block title %}Form Records{% endblock %}
+{% block title %}{{ location.name_and_address_of_establishment }} | Inspections{% endblock %}
 {% block content %}
 
 <div class="max-w-md mx-auto px-4 py-6">
   <h2 class="text-xl font-bold mb-6 text-center">📋 Inspection Records</h2>
 
-  <div class="card bg-base-100 shadow-sm">
+  <h2 class="mt-4 mb-3 text-lg font-bold">of {{ location.name_and_address_of_establishment }}</h2>
+  <div class="card bg-base-100 shadow-sm mb-16">
     <div class="card-body">
-      <h2 class="card-title">{{ location.name }}</h2>
       <p>
-        <strong>0. Area:-</strong> <br>{{ location.area.name }} <br><br>
+        <strong>0. Area:-</strong> {{ location.area.name }} <br><br>
         <strong>1. Name of the owner:-</strong> <br>{{ location.name_of_owner }} <br><br>
         <strong>2. Private address:-</strong> <br> {{ location.private_address }} <br><br>
-        <strong>3. NIC number:-</strong> <br> {{ location.nic_number }} <br><br>
+        <strong>3. NIC number:-</strong> <br>{{ location.nic_number }} <br><br>
         <strong>4. Telephone number:-</strong> <br> {{ location.telephone_number }} <br><br>
         <strong>5. Name & Address of the establishment:-</strong> <br> {{ location.name_and_address_of_establishment }} <br><br>
         <strong>6. Address of the legal owner of premises:-</strong> <br> {{ location.address_of_legal_owner }} <br><br>
@@ -23,10 +23,10 @@
     </div>
   </div>
 
+  <div class="mt-5 mb-7 text-lg font-bold">
+    Total inspections: {{ forms|length }}
+  </div>
   {% if forms %}
-    <div class="mt-5 mb-3 text-lg">
-      <strong>Total inspections: {{ forms|length }}</strong>
-    </div>
     <div class="space-y-4">
       {% for form in forms %}
         <div class="collapse collapse-arrow border border-base-300 rounded-lg bg-base-100 shadow-sm">
@@ -54,12 +54,14 @@
                    onclick="return confirm('Are you sure you want to delete this?')">🗑 Delete</a>
               </div>
             {% endif %}
+
           </div>
         </div>
       {% endfor %}
     </div>
   {% else %}
-    <p class="text-center text-gray-400">No inspection forms available.</p>
+    
+    <p class="text-center text-gray-400 mb-64">No inspection forms available.</p>
   {% endif %}
 
   <a href="{{ url_for('main.dashboard') }}" class="btn btn-ghost mt-6 w-full">← Back to Dashboard</a>
