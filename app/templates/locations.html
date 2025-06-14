@@ -2,7 +2,7 @@
 {% block title %}All Locations{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container min-h-screen">
   <h2 class="text-2xl font-bold mb-4">All Locations</h2>
 
   <form method="GET" action="{{ url_for('main.view_locations') }}" class="bg-white p-4 rounded-lg shadow space-y-4">
@@ -36,37 +36,35 @@
   </form>
 
   {% if locations %}
-  <div class="overflow-x-auto">
-    <table class="table table-zebra w-full">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Premise</th>
-          <th>Address</th>
-          <th>GS Area</th>
-          <th>Category</th>
-          <th>Owner</th>
-          <th>Contact</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for location in locations %}
-        <tr>
-          <td>{{ loop.index }}</td>
-          <td>{{ location.name_of_premise }}</td>
-          <td>{{ location.address_of_premise }}</td>
-          <td>{{ location.gs_area }}</td>
-          <td>{{ location.category_of_premise }}</td>
-          <td>{{ location.owner_name }}<br><small>{{ location.owner_nic }}</small></td>
-          <td>{{ location.contact_number }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+    <div class="text-center text-gray-400 w-full pt-8">Found {{ locations|length }} locations</div>
+    <ul class="space-y-3 mt-4 mb-12">
+      {% for location in locations %}
+        <div class="card card-dash bg-base-100 w-96">
+          <div class="card-body">
+            <h2 class="card-title">
+              {{ loop.index }}: {{ location.name_of_premise }} at {{ location.area.name }}
+            </h2>
+            <p>
+              <ul>
+                <li><strong>Category:</strong> {{ location.category_of_premise }}</li>
+                <li><strong>Address:</strong> {{ location.address_of_premise }}</li>
+                <li><strong>GS Area:</strong> {{ location.gs_area }}</li>
+                <li><strong>Owner's Name:</strong> {{ location.owner_name }}</li>
+                <li><strong>Owner's NIC:</strong> {{ location.owner_nic }}</li>
+                <li><strong>Owner's Address:</strong> {{ location.owner_address }}</li>
+                <li><strong>Owner's Contact No:</strong> {{ location.owner_contact_number }}</li>
+                <li><strong>Contact No:</strong> {{ location.contact_number }}</li>
+              </ul>
+            </p>
+          </div>
+        </div>
+      {% endfor %}
+    </ul>
   {% else %}
-  <p class="mt-4 text-gray-600">No locations found matching the filters.</p>
+    <div class="text-center text-gray-400 w-full pt-12">No locations found.</div>
   {% endif %}
+  <a href="{{ url_for('main.dashboard') }}" class="btn btn-ghost w-full mb-12">⬅ Back to Dashboard</a>
+
 </div>
 
 {% endblock %}
