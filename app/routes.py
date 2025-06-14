@@ -232,10 +232,10 @@ def add_location():
 
 @main.route('/locations')
 def view_locations():
-    search = request.args.get('search', '').strip()
+    search = request.args.get('search', '').strip().lower()
     area_id_raw = request.args.get('area_id', '').strip()
     area_id = int(area_id_raw) if area_id_raw.isdigit() else None
-    category = request.args.get('category', '').strip()
+    category = request.args.get('category', '').strip().lower()
 
     query = Location.query
 
