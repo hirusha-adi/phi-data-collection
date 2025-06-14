@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+{% block title %}All Locations{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2 class="text-2xl font-bold mb-4">All Locations</h2>
+
+  <form method="GET" action="{{ url_for('main.view_locations') }}" class="mb-6">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <input type="text" name="search" placeholder="Search..." value="{{ request.args.get('search', '') }}" class="input input-bordered w-full" />
+
+      <select name="area_id" class="select select-bordered w-full">
+        <option value="">All PHI Areas</option>
+        {% for area in areas %}
+        <option value="{{ area.id }}" {% if selected_area_id == area.id %}selected{% endif %}>{{ area.name }}</option>
+
+        {% endfor %}
+      </select>
+
+      <input type="text" name="category" placeholder="Category of Premise" value="{{ request.args.get('category', '') }}" class="input input-bordered w-full" />
+    </div>
+    <div class="mt-4">
+      <button class="btn btn-primary">🔍 Filter</button>
+      <a href="{{ url_for('main.view_locations') }}" class="btn btn-outline ml-2">Reset</a>
+    </div>
+  </form>
+
+  {% if locations %}
+  <div class="overflow-x-auto">
+    <table class="table table-zebra w-full">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Premise</th>
+          <th>Address</th>
+          <th>GS Area</th>
+          <th>Category</th>
+          <th>Owner</th>
+          <th>Contact</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for location in locations %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ location.name_of_premise }}</td>
+          <td>{{ location.address_of_premise }}</td>
+          <td>{{ location.gs_area }}</td>
+          <td>{{ location.category_of_premise }}</td>
+          <td>{{ location.owner_name }}<br><small>{{ location.owner_nic }}</small></td>
+          <td>{{ location.contact_number }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="mt-4 text-gray-600">No locations found matching the filters.</p>
+  {% endif %}
+</div>
+{% endblock %}
