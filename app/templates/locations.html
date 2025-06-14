@@ -5,25 +5,38 @@
 <div class="container">
   <h2 class="text-2xl font-bold mb-4">All Locations</h2>
 
-  <form method="GET" action="{{ url_for('main.view_locations') }}" class="mb-6">
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      <input type="text" name="search" placeholder="Search..." value="{{ request.args.get('search', '') }}" class="input input-bordered w-full" />
+  <form method="GET" action="{{ url_for('main.view_locations') }}" class="bg-white p-4 rounded-lg shadow space-y-4">
 
-      <select name="area_id" class="select select-bordered w-full">
-        <option value="">All PHI Areas</option>
-        {% for area in areas %}
-        <option value="{{ area.id }}" {% if selected_area_id == area.id %}selected{% endif %}>{{ area.name }}</option>
-
-        {% endfor %}
-      </select>
-
-      <input type="text" name="category" placeholder="Category of Premise" value="{{ request.args.get('category', '') }}" class="input input-bordered w-full" />
+    <div class="relative">
+      <input type="text" name="search" placeholder="Search by name, address, etc..."
+            value="{{ request.args.get('search', '') }}"
+            class="input input-bordered w-full rounded-lg" />
     </div>
-    <div class="mt-4">
-      <button class="btn btn-primary">🔍 Filter</button>
-      <a href="{{ url_for('main.view_locations') }}" class="btn btn-outline ml-2">Reset</a>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="relative">
+        <input type="text" name="category" placeholder="Category of premise"
+              value="{{ request.args.get('category', '') }}"
+              class="input input-bordered w-full rounded-lg" />
+      </div>
+
+      <div class="relative">
+        <select name="area_id" class="select select-bordered w-full rounded-lg">
+          <option value="">All PHI Areas</option>
+          {% for area in areas %}
+            <option value="{{ area.id }}" {% if selected_area_id == area.id %}selected{% endif %}>{{ area.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <!-- 🔘 Row 3: Buttons -->
+    <div class="flex flex-col sm:flex-row justify-end gap-2">
+      <button type="submit" class="btn btn-primary w-auto">🔍 Filter</button>
+      <a href="{{ url_for('main.view_locations') }}" class="btn btn-outline w-auto">Reset</a>
     </div>
   </form>
+
 
   {% if locations %}
   <div class="overflow-x-auto">
