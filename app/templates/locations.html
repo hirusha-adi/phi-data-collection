@@ -6,7 +6,6 @@
   <h2 class="text-2xl font-bold mb-4">All Locations</h2>
 
   <form method="GET" action="{{ url_for('main.view_locations') }}" class="bg-white p-4 rounded-lg shadow space-y-4">
-
     <div class="relative">
       <input type="text" name="search" placeholder="Search by name, address, etc..."
             value="{{ request.args.get('search', '') }}"
@@ -30,13 +29,11 @@
       </div>
     </div>
 
-    <!-- 🔘 Row 3: Buttons -->
     <div class="flex flex-col sm:flex-row justify-end gap-2">
       <button type="submit" class="btn btn-primary w-auto">🔍 Filter</button>
       <a href="{{ url_for('main.view_locations') }}" class="btn btn-outline w-auto">Reset</a>
     </div>
   </form>
-
 
   {% if locations %}
   <div class="overflow-x-auto">
@@ -71,4 +68,5 @@
   <p class="mt-4 text-gray-600">No locations found matching the filters.</p>
   {% endif %}
 </div>
+
 {% endblock %}
