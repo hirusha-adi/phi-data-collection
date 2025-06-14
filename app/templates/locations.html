@@ -41,9 +41,12 @@
       {% for location in locations %}
         <div class="card card-dash bg-base-100 w-96">
           <div class="card-body">
-            <h2 class="card-title">
-              {{ loop.index }}: {{ location.name_of_premise }} at {{ location.area.name }}
-            </h2>
+            <div class="flex flex-row justify-between">
+              <h2 class="card-title">
+                {{ loop.index }}: {{ location.name_of_premise }} at {{ location.area.name }}
+              </h2>
+              <a href="{{ url_for('main.view_forms', location_id=location.id) }}" class="btn">↗ Details</a>
+            </div>
             <p>
               <ul>
                 <li><strong>Category:</strong> {{ location.category_of_premise }}</li>
