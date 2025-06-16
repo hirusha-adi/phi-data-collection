@@ -197,4 +197,8 @@ cython_debug/
 *.log
 logs/
 *.db
-pocketbase-bin/
+tmp/
+
+# TODO: Exclude pdf/template-si.pdf
+*.pdf
+

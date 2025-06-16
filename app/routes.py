@@ -1,9 +1,13 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, send_file, url_for, request, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db, login_manager
 from .models import User, Area, Location, QuestionForm
 from .forms import LoginForm, QuestionEntryForm
+from PyPDFForm import PdfWrapper
+import os, tempfile
+from flask import after_this_request
+from datetime import datetime
 
 main = Blueprint('main', __name__)
 
@@ -263,5 +267,51 @@ def view_locations():
 
     return render_template('locations.html', locations=locations, areas=areas, selected_area_id=area_id)
 
+@main.route('/pdf')
+def generate_pdf():
+    form_id = request.args.get('id', '').strip().lower()
+    form_fill_location = request.args.get('fill_location', '').strip().lower()
+    
+    data = {}
+    
+    res_form = QuestionForm.query.get_or_404(form_id)
+    if not res_form:
+        return "Form not found", 404
+    
+    if form_fill_location:
+        data['name_of_premise'] = res_form.location.name_of_premise
+        data['address_of_premise'] = res_form.location.address_of_premise
+        data['gs_area'] = res_form.location.gs_area
+        data['owner_name'] = res_form.location.owner_name
+        data['owner_nic'] = res_form.location.owner_nic
+        data['owner_address'] = res_form.location.owner_address
+        data['contact_number'] = res_form.location.contact_number
+        data['owner_contact_number'] = res_form.location.owner_contact_number
+    
+    
+    
+    # Fill the PDF
+    filled_pdf = PdfWrapper("pdf/template-si.pdf").fill(data)
 
+    # Use tempfile to safely write to a temporary file
+    with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp_file:
+        tmp_file.write(filled_pdf.read())
+        tmp_file_path = tmp_file.name
+    
+    @after_this_request
+    def remove_file(response):
+        try:
+            os.remove(tmp_file_path)
+        except Exception as e:
+            print(f"Failed to delete temp file: {e}")
+        return response
+
+
+    # Send the file to the user
+    return send_file(
+        tmp_file_path,
+        mimetype="application/pdf",
+        as_attachment=True,
+        download_name=f"{datetime.now().strftime('%Y%m%d_%H_%M_%S')}.pdf"
+    )
 

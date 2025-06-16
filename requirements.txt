@@ -4,3 +4,12 @@ Flask-Login
 Flask-WTF
 WTForms
 Werkzeug
+
+pypdf===5.6.0
+pycparser===2.22
+pillow===11.2.1
+chardet===5.2.0
+reportlab===4.4.1
+cffi===1.17.1
+cryptography===45.0.4
+pypdfform===2.5.0
