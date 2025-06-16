@@ -59,8 +59,6 @@ def add_form():
             is_eligible_processing_info = form_data.get('is_eligible_processing_info') == 'on'
             is_eligible_food_storage_info = form_data.get('is_eligible_food_storage_info') == 'on'
             
-            print(is_eligible_food_handler_info, is_eligible_processing_info, is_eligible_food_storage_info)
-
             # Create a new form instance
             form = QuestionForm()
 
@@ -68,15 +66,11 @@ def add_form():
             form.location_id = int(form_data.get('location'))
             form.user_id = current_user.id
             
-            print(form.location_id, form.user_id)
-
             # General
             form.premises_registered = int(form_data.get('premises_registered'))
             form.certificate_displayed = int(form_data.get('certificate_displayed'))
             form.not_convicted = int(form_data.get('not_convicted'))
             form.food_not_destroyed = int(form_data.get('food_not_destroyed'))
-
-            print(form.premises_registered, form.certificate_displayed, form.not_convicted, form.food_not_destroyed)
 
             # Building
             form.safe_water = int(form_data.get('safe_water'))
@@ -85,8 +79,6 @@ def add_form():
             form.sound_pollution = int(form_data.get('sound_pollution'))
             form.toilets_cleanliness = int(form_data.get('toilets_cleanliness'))
             
-            print(form.safe_water, form.cleanliness, form.pests_animals, form.sound_pollution, form.toilets_cleanliness)
-
             # Food Handler
             form.is_eligible_food_handler_info = is_eligible_food_handler_info
             if is_eligible_food_handler_info:
@@ -100,8 +92,6 @@ def add_form():
                 form.unhygienic_behaviour = int(form_data.get('unhygienic_behaviour'))
                 form.clean_utensils = int(form_data.get('clean_utensils'))
             
-            print(form.medical_certificates, form.proper_clothing, form.unhygienic_behaviour, form.clean_utensils)
-
             # Processing and Serving
             form.is_eligible_processing_info = is_eligible_processing_info
             if is_eligible_processing_info:
@@ -119,8 +109,6 @@ def add_form():
                 form.wastewater_disposal = int(form_data.get('wastewater_disposal'))
                 form.closed_bins = int(form_data.get('closed_bins'))
                 
-            print(form.walls_hygienic, form.floor_hygienic, form.ceiling_hygienic, form.food_surfaces_clean, form.wastewater_disposal, form.closed_bins)
-
             # Food Storage
             form.is_eligible_food_storage_info = is_eligible_food_storage_info
             if is_eligible_food_storage_info:
@@ -134,12 +122,8 @@ def add_form():
                 form.cooked_food_container = int(form_data.get('cooked_food_container'))
                 form.cooked_food_contam_prevented = int(form_data.get('cooked_food_contam_prevented'))
             
-            print(form.cooked_food_closed, form.cooked_food_temp, form.cooked_food_container, form.cooked_food_contam_prevented)
-
             # This is always required and must be submitted normally
             form.uncooked_food_contam_prevented = int(form_data.get('uncooked_food_contam_prevented'))
-            
-            print(form.uncooked_food_contam_prevented)
             
             db.session.add(form)
             db.session.commit()
