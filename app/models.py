@@ -59,7 +59,7 @@ class QuestionForm(db.Model):
 
     # Food Handler
     # (optional) - set to -1
-    is_eligigible_food_handler_info = db.Column(db.Boolean, nullable=False)
+    is_eligible_food_handler_info = db.Column(db.Boolean, nullable=False)
     medical_certificates = db.Column(db.Integer, nullable=False)
     proper_clothing = db.Column(db.Integer, nullable=False)
     unhygienic_behaviour = db.Column(db.Integer, nullable=False)
