@@ -332,16 +332,40 @@ def generate_pdf():
         data['d1_q4_s1'] = 20
         data['d1_q4_sum'] = 20
     
-    if not res_form.is_eligible_processing_info:
-        data['d1_q5_sum'] = 20
+    # Food Storage
+    if not res_form.is_eligible_food_storage_info:
+        data['d1_q5_1'] = res_form.cooked_food_closed
+        data['d1_q5_2'] = res_form.cooked_food_temp
+        data['d1_q5_3'] = res_form.cooked_food_container
+        data['d1_q5_4'] = res_form.cooked_food_contam_prevented
+        # leave d1_q5_s1 empty
+        data['d1_q5_5'] = res_form.uncooked_food_contam_prevented
+        data['d1_q5_sum'] = int(float(res_form.cooked_food_closed) + float(res_form.cooked_food_temp) + float(res_form.cooked_food_container) + float(res_form.cooked_food_contam_prevented) + float(res_form.uncooked_food_contam_prevented))
     else:
-        data['d1_q5_s1'] = 20
-        data['d1_q5_sum'] = 20
+        data['d1_q5_s1'] = 16
+        data['d1_q5_5'] = res_form.uncooked_food_contam_prevented
+        data['d1_q5_sum'] = int(data['d1_q5_s1'] + float(res_form.uncooked_food_contam_prevented))
     
-    # Fill the PDF
+    # Final Stuff
+    data['d1_f_sum'] = data['d1_q1_sum'] + data['d1_q2_sum'] + data['d1_q3_sum'] + data['d1_q4_sum'] + data['d1_q5_sum']
+    data['d1_f_percentage'] = int((data['d1_f_sum'] / 100) * 100)
+    
+    # The grading is done as follows, based on the percentage:
+    #   75 - 100: A
+    #   50 - 74: B
+    #   25 - 49: C
+    #   0 - 24: D
+    if (data['d1_f_percentage'] >= 75) and (data['d1_f_percentage'] <= 100):
+        data['d1_f_grade'] = 'A'
+    elif (data['d1_f_percentage'] >= 50) and (data['d1_f_percentage'] < 75):
+        data['d1_f_grade'] = 'B'
+    elif (data['d1_f_percentage'] >= 25) and (data['d1_f_percentage'] < 50):
+        data['d1_f_grade'] = 'C'
+    else:
+        data['d1_f_grade'] = 'D'
+        
     filled_pdf = PdfWrapper("pdf/template-si.pdf").fill(data)
-
-    # Use tempfile to safely write to a temporary file
+    
     with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp_file:
         tmp_file.write(filled_pdf.read())
         tmp_file_path = tmp_file.name
@@ -354,8 +378,6 @@ def generate_pdf():
             print(f"Failed to delete temp file: {e}")
         return response
 
-
-    # Send the file to the user
     return send_file(
         tmp_file_path,
         mimetype="application/pdf",
