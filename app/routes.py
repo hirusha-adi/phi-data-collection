@@ -308,6 +308,35 @@ def generate_pdf():
     data['d1_q2_5'] = res_form.toilets_cleanliness
     data['d1_q2_sum'] = int(float(res_form.safe_water) + float(res_form.cleanliness) + float(res_form.pests_animals) + float(res_form.sound_pollution) + float(res_form.toilets_cleanliness))
     
+    # Food Handler
+    if not res_form.is_eligible_food_handler_info:
+        data['d1_q3_1'] = res_form.medical_certificates
+        data['d1_q3_2'] = res_form.proper_clothing
+        data['d1_q3_3'] = res_form.unhygienic_behaviour
+        data['d1_q3_4'] = res_form.clean_utensils
+        data['d1_q3_sum'] = int(float(res_form.medical_certificates) + float(res_form.proper_clothing) + float(res_form.unhygienic_behaviour) + float(res_form.clean_utensils))
+    else:
+        data['d1_q3_s1'] = 20
+        data['d1_q3_sum'] = 20
+        
+    # Processing and Serving
+    if not res_form.is_eligible_processing_info:
+        data['d1_q4_1'] = res_form.walls_hygienic
+        data['d1_q4_2'] = res_form.floor_hygienic
+        data['d1_q4_3'] = res_form.ceiling_hygienic
+        data['d1_q4_4'] = res_form.food_surfaces_clean
+        data['d1_q4_5'] = res_form.wastewater_disposal
+        data['d1_q4_6'] = res_form.closed_bins
+        data['d1_q4_sum'] = int(float(res_form.walls_hygienic) + float(res_form.floor_hygienic) + float(res_form.ceiling_hygienic) + float(res_form.food_surfaces_clean) + float(res_form.wastewater_disposal) + float(res_form.closed_bins))
+    else:
+        data['d1_q4_s1'] = 20
+        data['d1_q4_sum'] = 20
+    
+    if not res_form.is_eligible_processing_info:
+        data['d1_q5_sum'] = 20
+    else:
+        data['d1_q5_s1'] = 20
+        data['d1_q5_sum'] = 20
     
     # Fill the PDF
     filled_pdf = PdfWrapper("pdf/template-si.pdf").fill(data)
