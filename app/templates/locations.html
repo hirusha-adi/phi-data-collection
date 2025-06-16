@@ -45,7 +45,7 @@
               <h2 class="card-title">
                 {{ loop.index }}: {{ location.name_of_premise }} at {{ location.area.name }}
               </h2>
-              <a href="{{ url_for('main.view_forms', location_id=location.id) }}" class="btn">↗ Details</a>
+              <a href="{{ url_for('main.view_forms', location_id=location.id) }}" class="btn btn-soft btn-info">↗ Details</a>
             </div>
             <p>
               <ul>
