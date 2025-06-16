@@ -11,12 +11,17 @@
         <div>
           <label class="label font-medium">Select Location</label>
           <select name="location" class="select select-bordered w-full" required>
-            <option value="" disabled selected>-- Choose Location --</option>
+            <option value="" disabled {% if not request.args.get('location_id') %}selected{% endif %}>-- Choose Location --</option>
             {% for location in locations %}
-            <option value="{{ location.id }}">{{ location.name_of_premise }} - {{ location.area.name }}</option>
+            <option value="{{ location.id }}" 
+              {% if request.args.get('location_id') and request.args.get('location_id')|int==location.id %} selected {% endif %}
+            >
+              {{ location.name_of_premise }} - {{ location.area.name }}
+            </option>
             {% endfor %}
           </select>
         </div>
+
 
         <h4 class="font-semibold mt-6">General Details</h4>
         {% for field in [
@@ -56,7 +61,8 @@
         <div class="form-control">
           <label class="cursor-pointer label">
             <span class="label-text">This location has no food handler information</span>
-            <input type="checkbox" name="is_eligible_food_handler_info" id="chk-food-handler" class="checkbox checkbox-error" />
+            <input type="checkbox" name="is_eligible_food_handler_info" id="chk-food-handler"
+              class="checkbox checkbox-error" />
           </label>
         </div>
         {% for field in [
@@ -80,7 +86,8 @@
         <div class="form-control">
           <label class="cursor-pointer label">
             <span class="label-text">This location has no processing/serving information</span>
-            <input type="checkbox" name="is_eligible_processing_info" id="chk-processing" class="checkbox checkbox-error" />
+            <input type="checkbox" name="is_eligible_processing_info" id="chk-processing"
+              class="checkbox checkbox-error" />
           </label>
         </div>
         {% for field in [
@@ -111,7 +118,8 @@
         <div class="form-control">
           <label class="cursor-pointer label">
             <span class="label-text">This location has no food storage information</span>
-            <input type="checkbox" name="is_eligible_food_storage_info" id="chk-storage" class="checkbox checkbox-error" />
+            <input type="checkbox" name="is_eligible_food_storage_info" id="chk-storage"
+              class="checkbox checkbox-error" />
           </label>
         </div>
         {% for field in [
