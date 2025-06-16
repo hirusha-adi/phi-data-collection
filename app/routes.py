@@ -288,6 +288,25 @@ def generate_pdf():
         data['contact_number'] = res_form.location.contact_number
         data['owner_contact_number'] = res_form.location.owner_contact_number
     
+    data['date1'] = res_form.created_at.strftime('%d/%m')
+    
+    # General Details
+    data['d1_q1_1'] = res_form.premises_registered
+    data['d1_q1_2'] = res_form.certificate_displayed
+    # TODO: Add this and fix later
+    # data['d1_q1_s1'] = res_form.certificate_displayed
+    data['d1_q1_3'] = res_form.not_convicted
+    data['d1_q1_4'] = res_form.food_not_destroyed
+    # TODO: this might change when fixing above
+    data['d1_q1_sum'] = int(float(res_form.premises_registered) + float(res_form.certificate_displayed) + float(res_form.not_convicted) + float(res_form.food_not_destroyed))
+    
+    # Building Details
+    data['d1_q2_1'] = res_form.safe_water
+    data['d1_q2_2'] = res_form.cleanliness
+    data['d1_q2_3'] = res_form.pests_animals
+    data['d1_q2_4'] = res_form.sound_pollution
+    data['d1_q2_5'] = res_form.toilets_cleanliness
+    data['d1_q2_sum'] = int(float(res_form.safe_water) + float(res_form.cleanliness) + float(res_form.pests_animals) + float(res_form.sound_pollution) + float(res_form.toilets_cleanliness))
     
     
     # Fill the PDF
