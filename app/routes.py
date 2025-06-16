@@ -256,7 +256,7 @@ def view_locations():
     if category:
         query = query.filter(Location.category_of_premise.ilike(f"%{category}%"))
 
-    locations = query.order_by(Location.id.desc()).all()
+    locations = query.order_by(Location.id.asc()).all()
     areas = Area.query.all()
 
     return render_template('locations.html', locations=locations, areas=areas, selected_area_id=area_id)
