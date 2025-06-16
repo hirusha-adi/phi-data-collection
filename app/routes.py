@@ -229,3 +229,37 @@ def add_location():
             flash("Please fill in all required fields.", "error")
 
     return render_template('add_location.html', areas=areas)
+
+@main.route('/locations')
+def view_locations():
+    search = request.args.get('search', '').strip().lower()
+    area_id_raw = request.args.get('area_id', '').strip()
+    area_id = int(area_id_raw) if area_id_raw.isdigit() else None
+    category = request.args.get('category', '').strip().lower()
+
+    query = Location.query
+
+    if search:
+        search_term = f"%{search}%"
+        query = query.filter(
+            (Location.name_of_premise.ilike(search_term)) |
+            (Location.address_of_premise.ilike(search_term)) |
+            (Location.owner_name.ilike(search_term)) |
+            (Location.owner_nic.ilike(search_term)) |
+            (Location.contact_number.ilike(search_term)) |
+            (Location.gs_area.ilike(search_term))
+        )
+
+    if area_id:
+        query = query.filter_by(area_id=area_id)
+
+    if category:
+        query = query.filter(Location.category_of_premise.ilike(f"%{category}%"))
+
+    locations = query.order_by(Location.id.asc()).all()
+    areas = Area.query.all()
+
+    return render_template('locations.html', locations=locations, areas=areas, selected_area_id=area_id)
+
+
+

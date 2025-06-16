@@ -6,7 +6,7 @@
   <h2 class="text-xl font-bold mb-6 text-center">📋 Inspection Records</h2>
 
   <h2 class="mt-4 mb-3 text-lg font-bold">of {{ location.name_of_premise }}</h2>
-  <div class="card bg-base-100 shadow-sm mb-16">
+  <div class="card bg-base-100 shadow-sm mb-8">
     <div class="card-body">
       <p>
         <strong>PHI Area:-</strong> {{ location.area.name }} <br><br>
@@ -22,6 +22,14 @@
       </p>
     </div>
   </div>
+
+
+  <div class="grid grid-cols-2 gap-x-3">
+    <a href="{{ url_for('main.add_form', location_id=location.id) }}" class="btn btn-soft btn-primary">➕ New Inspection</a>
+    <!-- TODO: Change the URL later -->
+    <a href="{{ url_for('main.add_form') }}" class="btn btn-soft btn-primary">↗ Generate PDF</a>
+  </div>
+  <a href="{{ url_for('main.dashboard') }}" class="btn btn-ghost mb-12 mt-3 w-full">← Back to Dashboard</a>
 
   <div class="mt-5 mb-7 text-lg font-bold">
     Total inspections: {{ forms|length }}
