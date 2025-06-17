@@ -26,8 +26,7 @@
 
   <div class="grid grid-cols-2 gap-x-3">
     <a href="{{ url_for('main.add_form', location_id=location.id) }}" class="btn btn-soft btn-primary">➕ New Inspection</a>
-    <!-- TODO: Change the URL later -->
-    <a href="{{ url_for('main.add_form') }}" class="btn btn-soft btn-primary">↗ Generate PDF</a>
+    <a href="{{ url_for('main.gen_pdf',  location_id=location.id) }}" class="btn btn-soft btn-primary">↗ Generate PDF</a>
   </div>
   <a href="{{ url_for('main.dashboard') }}" class="btn btn-ghost mb-12 mt-3 w-full">← Back to Dashboard</a>
 
