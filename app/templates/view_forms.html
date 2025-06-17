@@ -25,50 +25,122 @@
 
 
   <div class="grid grid-cols-2 gap-x-3">
-    <a href="{{ url_for('main.add_form', location_id=location.id) }}" class="btn btn-soft btn-primary">➕ New Inspection</a>
-    <a href="{{ url_for('main.gen_pdf',  location_id=location.id) }}" class="btn btn-soft btn-primary">↗ Generate PDF</a>
+    <a href="{{ url_for('main.add_form', location_id=location.id) }}" class="btn btn-soft btn-primary">➕ New
+      Inspection</a>
+    <a href="{{ url_for('main.gen_pdf',  location_id=location.id) }}" class="btn btn-soft btn-primary">↗ Generate
+      PDF</a>
   </div>
   <a href="{{ url_for('main.dashboard') }}" class="btn btn-ghost mb-12 mt-3 w-full">← Back to Dashboard</a>
 
   <div class="mt-5 mb-7 text-lg font-bold">
     Total inspections: {{ forms|length }}
   </div>
+
   {% if forms %}
-    <div class="space-y-4">
-      {% for form in forms %}
-        <div class="collapse collapse-arrow border border-base-300 rounded-lg bg-base-100 shadow-sm">
-          <input type="radio" name="accordion" {% if loop.first %}checked{% endif %} />
-          <div class="collapse-title font-medium text-sm">
-            {{ form.location.name }}, {{ form.location.area.name }}
-            <br>
-            <span class="text-xs text-gray-500">
-              🕒 {{ form.created_at.strftime('%Y-%m-%d %H:%M') }} <br>
-              👤 {{ form.user.name }}
-            </span>
-          </div>
-          <div class="collapse-content text-sm space-y-2">
-            <p><strong>Cockroaches:</strong>
-              <span class="{% if form.cockroaches %}text-error{% else %}text-success{% endif %} font-semibold">
-                {{ 'Yes' if form.cockroaches else 'No' }}
-              </span>
-            </p>
-            <p><strong>Last Updated:</strong> {{ form.last_updated.strftime('%Y-%m-%d %H:%M') }}</p>
+  <ul class="space-y-4">
+    {% for form in forms %}
+    <li>
+      <div class="card bg-base-100 shadow-sm">
+        <div class="card-body space-y-2">
 
-            {% if form.user.id == current_user.id %}
-              <div class="flex gap-2 mt-3">
-                <a href="{{ url_for('main.edit_form', form_id=form.id) }}" class="btn btn-sm btn-outline btn-primary">✏️ Edit</a>
-                <a href="{{ url_for('main.delete_form', form_id=form.id) }}" class="btn btn-sm btn-outline btn-error"
-                   onclick="return confirm('Are you sure you want to delete this?')">🗑 Delete</a>
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="card-title text-primary">
+                {{ form.created_at.strftime('%Y-%m-%d') }} ({{ form.id }})
+              </h2>
+            </div>
+            <span class="badge badge-secondary">{{ form.sum_all }}%</span>
+          </div>
+
+          <div class="text-sm leading-relaxed">
+            <p><strong>Created by:</strong>  {{ form.user.name }}</p>
+            <p><strong>Created at:</strong> {{ form.created_at.strftime('%Y-%m-%d %I:%M %p') }}</p>
+            <p><strong>Updated at:</strong> {{ form.last_updated.strftime('%Y-%m-%d %I:%M %p') }}</p>
+            <p><strong>Subtotal - General:</strong> {{ form.sum_general_details }}</p>
+            <p><strong>Subtotal - Building:</strong> {{ form.sum_building_details }}</p>
+            <p><strong>Subtotal - Food Handler:</strong> {{ form.sum_food_handler }}</p>
+            <p><strong>Subtotal - Processing and/or Serving:</strong> {{ form.sum_processing_and_serving }}</p>
+            <p><strong>Subtotal - Food Storage:</strong> {{ form.sum_food_storage }}</p>
+            <p><strong>Final Score:</strong> {{ form.sum_all }}</p>
+            <p><strong>Grade:</strong> {{ form.grade }}</p>
+          </div>
+
+          <div class="collapse collapse-arrow bg-base-200 rounded-box mt-4">
+            <input type="checkbox" />
+            <div class="collapse-title font-medium">
+              🧾 View Full Inspection Details
+            </div>
+            <div class="collapse-content text-sm space-y-3">
+
+              <div>
+                <p class="font-semibold">General Details ({{ form.sum_general_details }}/20)</p>
+                <p>Premises Registered: {{ form.premises_registered | value_or_na  }}</p>
+                <p>Certificate Displayed: {{ form.certificate_displayed | value_or_na  }}</p>
+                <p>Not Convicted: {{ form.not_convicted | value_or_na }}</p>
+                <p>Food Not Destroyed: {{ form.food_not_destroyed | value_or_na }}</p>
               </div>
-            {% endif %}
 
+              <div>
+                <p class="font-semibold">Building Details ({{ form.sum_building_details }}/20)</p>
+                <p>Safe Water: {{ form.safe_water | value_or_na }}</p>
+                <p>Cleanliness: {{ form.cleanliness | value_or_na }}</p>
+                <p>Pests/Animals: {{ form.pests_animals | value_or_na }}</p>
+                <p>Sound Pollution: {{ form.sound_pollution | value_or_na }}</p>
+                <p>Toilets Cleanliness: {{ form.toilets_cleanliness | value_or_na }}</p>
+              </div>
+
+              <div>
+                <p class="font-semibold">Food Handler ({{ form.sum_food_handler }}/20)</p>
+                <p>Medical Certificates: {{ form.medical_certificates | value_or_na }}</p>
+                <p>Proper Clothing: {{ form.proper_clothing | value_or_na }}</p>
+                <p>Unhygienic Behaviour: {{ form.unhygienic_behaviour | value_or_na }}</p>
+                <p>Clean Utensils: {{ form.clean_utensils | value_or_na }}</p>
+              </div>
+
+              <div>
+                <p class="font-semibold">Processing & Serving ({{ form.sum_processing_and_serving }}/20)</p>
+                <p>Walls Hygienic: {{ form.walls_hygienic | value_or_na }}</p>
+                <p>Floor Hygienic: {{ form.floor_hygienic | value_or_na }}</p>
+                <p>Ceiling Hygienic: {{ form.ceiling_hygienic | value_or_na }}</p>
+                <p>Food Surfaces Clean: {{ form.food_surfaces_clean | value_or_na }}</p>
+                <p>Wastewater Disposal: {{ form.wastewater_disposal | value_or_na }}</p>
+                <p>Closed Bins: {{ form.closed_bins | value_or_na }}</p>
+              </div>
+
+              <div>
+                <p class="font-semibold">Food Storage ({{ form.sum_food_storage }}/20)</p>
+                <p>Cooked Food Closed: {{ form.cooked_food_closed | value_or_na }}</p>
+                <p>Cooked Food Temp: {{ form.cooked_food_temp | value_or_na }}</p>
+                <p>Cooked Food Container: {{ form.cooked_food_container | value_or_na }}</p>
+                <p>Cooked Food Contamination Prevented: {{ form.cooked_food_contam_prevented | value_or_na }}</p>
+                <p>Uncooked Food Contamination Prevented: {{ form.uncooked_food_contam_prevented | value_or_na }}</p>
+              </div>
+
+              <div>
+                <p class="font-semibold">Final</p>
+                <p>Total Score: {{ form.sum_all }}</p>
+                <p>Grade: {{ form.grade }}</p>
+              </div>
+
+            </div>
           </div>
+
+          {% if form.user.id == current_user.id %}
+          <div class="flex justify-end gap-3 pt-2">
+            <a href="{{ url_for('main.edit_form', form_id=form.id) }}" class="btn btn-sm btn-soft btn-primary">✏️
+              Edit</a>
+            <a href="{{ url_for('main.delete_form', form_id=form.id) }}" class="btn btn-sm btn-soft btn-error"
+              onclick="return confirm('Are you sure you want to delete this?')">🗑 Delete</a>
+          </div>
+          {% endif %}
+
         </div>
-      {% endfor %}
-    </div>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
   {% else %}
-    
-    <p class="text-center text-gray-400 mb-64">No inspection forms available.</p>
+  <p class="text-center text-gray-400 mb-64">No inspection forms available.</p>
   {% endif %}
 
   <a href="{{ url_for('main.dashboard') }}" class="btn btn-ghost mt-6 w-full">← Back to Dashboard</a>
