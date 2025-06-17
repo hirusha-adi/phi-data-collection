@@ -269,101 +269,108 @@ def view_locations():
 
 @main.route('/pdf')
 def generate_pdf():
-    form_id = request.args.get('id', '').strip().lower()
-    form_fill_location = request.args.get('fill_location', '').strip().lower()
+    qry_id = request.args.get('id', '').strip().lower()
+    qry_fill_location = request.args.get('fill_location', '').strip().lower()
     
     data = {}
     
-    res_form = QuestionForm.query.get_or_404(form_id)
-    if not res_form:
-        return "Form not found", 404
+    res_location = Location.query.get_or_404(qry_id)
+    res_forms = QuestionForm.query.filter_by(location_id=qry_id).order_by(QuestionForm.created_at.asc()).all()
+    print(res_forms)
     
-    if form_fill_location:
-        data['name_of_premise'] = res_form.location.name_of_premise
-        data['address_of_premise'] = res_form.location.address_of_premise
-        data['gs_area'] = res_form.location.gs_area
-        data['owner_name'] = res_form.location.owner_name
-        data['owner_nic'] = res_form.location.owner_nic
-        data['owner_address'] = res_form.location.owner_address
-        data['contact_number'] = res_form.location.contact_number
-        data['owner_contact_number'] = res_form.location.owner_contact_number
+    if not res_forms:
+            print("Form not found")
+            
+    if qry_fill_location:
+        data['name_of_premise'] = res_location.name_of_premise
+        data['address_of_premise'] = res_location.address_of_premise
+        data['gs_area'] = res_location.gs_area
+        data['owner_name'] = res_location.owner_name
+        data['owner_nic'] = res_location.owner_nic
+        data['owner_address'] = res_location.owner_address
+        data['contact_number'] = res_location.contact_number
+        data['owner_contact_number'] = res_location.owner_contact_number
     
-    data['date1'] = res_form.created_at.strftime('%d/%m')
-    
-    # General Details
-    data['d1_q1_1'] = res_form.premises_registered
-    data['d1_q1_2'] = res_form.certificate_displayed
-    # TODO: Add this and fix later
-    # data['d1_q1_s1'] = res_form.certificate_displayed
-    data['d1_q1_3'] = res_form.not_convicted
-    data['d1_q1_4'] = res_form.food_not_destroyed
-    # TODO: this might change when fixing above
-    data['d1_q1_sum'] = int(float(res_form.premises_registered) + float(res_form.certificate_displayed) + float(res_form.not_convicted) + float(res_form.food_not_destroyed))
-    
-    # Building Details
-    data['d1_q2_1'] = res_form.safe_water
-    data['d1_q2_2'] = res_form.cleanliness
-    data['d1_q2_3'] = res_form.pests_animals
-    data['d1_q2_4'] = res_form.sound_pollution
-    data['d1_q2_5'] = res_form.toilets_cleanliness
-    data['d1_q2_sum'] = int(float(res_form.safe_water) + float(res_form.cleanliness) + float(res_form.pests_animals) + float(res_form.sound_pollution) + float(res_form.toilets_cleanliness))
-    
-    # Food Handler
-    if not res_form.is_eligible_food_handler_info:
-        data['d1_q3_1'] = res_form.medical_certificates
-        data['d1_q3_2'] = res_form.proper_clothing
-        data['d1_q3_3'] = res_form.unhygienic_behaviour
-        data['d1_q3_4'] = res_form.clean_utensils
-        data['d1_q3_sum'] = int(float(res_form.medical_certificates) + float(res_form.proper_clothing) + float(res_form.unhygienic_behaviour) + float(res_form.clean_utensils))
-    else:
-        data['d1_q3_s1'] = 20
-        data['d1_q3_sum'] = 20
+    # Fill all columns in pdf
+    for row_num, res_form in enumerate(res_forms, start=1):
+        # Date
+        data[f'date{row_num}'] = res_form.created_at.strftime('%d/%m')
         
-    # Processing and Serving
-    if not res_form.is_eligible_processing_info:
-        data['d1_q4_1'] = res_form.walls_hygienic
-        data['d1_q4_2'] = res_form.floor_hygienic
-        data['d1_q4_3'] = res_form.ceiling_hygienic
-        data['d1_q4_4'] = res_form.food_surfaces_clean
-        data['d1_q4_5'] = res_form.wastewater_disposal
-        data['d1_q4_6'] = res_form.closed_bins
-        data['d1_q4_sum'] = int(float(res_form.walls_hygienic) + float(res_form.floor_hygienic) + float(res_form.ceiling_hygienic) + float(res_form.food_surfaces_clean) + float(res_form.wastewater_disposal) + float(res_form.closed_bins))
-    else:
-        data['d1_q4_s1'] = 20
-        data['d1_q4_sum'] = 20
-    
-    # Food Storage
-    if not res_form.is_eligible_food_storage_info:
-        data['d1_q5_1'] = res_form.cooked_food_closed
-        data['d1_q5_2'] = res_form.cooked_food_temp
-        data['d1_q5_3'] = res_form.cooked_food_container
-        data['d1_q5_4'] = res_form.cooked_food_contam_prevented
-        # leave d1_q5_s1 empty
-        data['d1_q5_5'] = res_form.uncooked_food_contam_prevented
-        data['d1_q5_sum'] = int(float(res_form.cooked_food_closed) + float(res_form.cooked_food_temp) + float(res_form.cooked_food_container) + float(res_form.cooked_food_contam_prevented) + float(res_form.uncooked_food_contam_prevented))
-    else:
-        data['d1_q5_s1'] = 16
-        data['d1_q5_5'] = res_form.uncooked_food_contam_prevented
-        data['d1_q5_sum'] = int(data['d1_q5_s1'] + float(res_form.uncooked_food_contam_prevented))
-    
-    # Final Stuff
-    data['d1_f_sum'] = data['d1_q1_sum'] + data['d1_q2_sum'] + data['d1_q3_sum'] + data['d1_q4_sum'] + data['d1_q5_sum']
-    data['d1_f_percentage'] = int((data['d1_f_sum'] / 100) * 100)
-    
-    # The grading is done as follows, based on the percentage:
-    #   75 - 100: A
-    #   50 - 74: B
-    #   25 - 49: C
-    #   0 - 24: D
-    if (data['d1_f_percentage'] >= 75) and (data['d1_f_percentage'] <= 100):
-        data['d1_f_grade'] = 'A'
-    elif (data['d1_f_percentage'] >= 50) and (data['d1_f_percentage'] < 75):
-        data['d1_f_grade'] = 'B'
-    elif (data['d1_f_percentage'] >= 25) and (data['d1_f_percentage'] < 50):
-        data['d1_f_grade'] = 'C'
-    else:
-        data['d1_f_grade'] = 'D'
+        # General Details
+        data[f'd{row_num}_q1_1'] = res_form.premises_registered
+        data[f'd{row_num}_q1_2'] = res_form.certificate_displayed
+        # TODO: Add this and fix later
+        # data['d1_q1_s1'] = res_form.certificate_displayed
+        data[f'd{row_num}_q1_3'] = res_form.not_convicted
+        data[f'd{row_num}_q1_4'] = res_form.food_not_destroyed
+        # TODO: this might change when fixing above
+        data[f'd{row_num}_q1_sum'] = int(float(res_form.premises_registered) + float(res_form.certificate_displayed) + float(res_form.not_convicted) + float(res_form.food_not_destroyed))
         
+        # Building Details
+        data[f'd{row_num}_q2_1'] = res_form.safe_water
+        data[f'd{row_num}_q2_2'] = res_form.cleanliness
+        data[f'd{row_num}_q2_3'] = res_form.pests_animals
+        data[f'd{row_num}_q2_4'] = res_form.sound_pollution
+        data[f'd{row_num}_q2_5'] = res_form.toilets_cleanliness
+        data[f'd{row_num}_q2_sum'] = int(float(res_form.safe_water) + float(res_form.cleanliness) + float(res_form.pests_animals) + float(res_form.sound_pollution) + float(res_form.toilets_cleanliness))
+        
+        # Food Handler
+        if not res_form.is_eligible_food_handler_info:
+            data[f'd{row_num}_q3_1'] = res_form.medical_certificates
+            data[f'd{row_num}_q3_2'] = res_form.proper_clothing
+            data[f'd{row_num}_q3_3'] = res_form.unhygienic_behaviour
+            data[f'd{row_num}_q3_4'] = res_form.clean_utensils
+            data[f'd{row_num}_q3_sum'] = int(float(res_form.medical_certificates) + float(res_form.proper_clothing) + float(res_form.unhygienic_behaviour) + float(res_form.clean_utensils))
+        else:
+            data[f'd{row_num}_q3_s1'] = 20
+            data[f'd{row_num}_q3_sum'] = 20
+            
+        # Processing and Serving
+        if not res_form.is_eligible_processing_info:
+            data[f'd{row_num}_q4_1'] = res_form.walls_hygienic
+            data[f'd{row_num}_q4_2'] = res_form.floor_hygienic
+            data[f'd{row_num}_q4_3'] = res_form.ceiling_hygienic
+            data[f'd{row_num}_q4_4'] = res_form.food_surfaces_clean
+            data[f'd{row_num}_q4_5'] = res_form.wastewater_disposal
+            data[f'd{row_num}_q4_6'] = res_form.closed_bins
+            data[f'd{row_num}_q4_sum'] = int(float(res_form.walls_hygienic) + float(res_form.floor_hygienic) + float(res_form.ceiling_hygienic) + float(res_form.food_surfaces_clean) + float(res_form.wastewater_disposal) + float(res_form.closed_bins))
+        else:
+            data[f'd{row_num}_q4_s1'] = 20
+            data[f'd{row_num}_q4_sum'] = 20
+        
+        # Food Storage
+        if not res_form.is_eligible_food_storage_info:
+            data[f'd{row_num}_q5_1'] = res_form.cooked_food_closed
+            data[f'd{row_num}_q5_2'] = res_form.cooked_food_temp
+            data[f'd{row_num}_q5_3'] = res_form.cooked_food_container
+            data[f'd{row_num}_q5_4'] = res_form.cooked_food_contam_prevented
+            # leave d1_q5_s1 empty
+            data[f'd{row_num}_q5_5'] = res_form.uncooked_food_contam_prevented
+            data[f'd{row_num}_q5_sum'] = int(float(res_form.cooked_food_closed) + float(res_form.cooked_food_temp) + float(res_form.cooked_food_container) + float(res_form.cooked_food_contam_prevented) + float(res_form.uncooked_food_contam_prevented))
+        else:
+            data[f'd{row_num}_q5_s1'] = 16
+            data[f'd{row_num}_q5_5'] = res_form.uncooked_food_contam_prevented
+            data[f'd{row_num}_q5_sum'] = int(data['d1_q5_s1'] + float(res_form.uncooked_food_contam_prevented))
+        
+        # Final Stuff
+        data[f'd{row_num}_f_sum'] = data[f'd{row_num}_q1_sum'] + data[f'd{row_num}_q2_sum'] + data[f'd{row_num}_q3_sum'] + data[f'd{row_num}_q4_sum'] + data[f'd{row_num}_q5_sum']
+        data[f'd{row_num}_f_percentage'] = int((data[f'd{row_num}_f_sum'] / 100) * 100)
+        
+        # The grading is done as follows, based on the percentage:
+        #   75 - 100: A
+        #   50 - 74: B
+        #   25 - 49: C
+        #   0 - 24: D
+        if (data[f'd{row_num}_f_percentage'] >= 75) and (data[f'd{row_num}_f_percentage'] <= 100):
+            data[f'd{row_num}_f_grade'] = 'A'
+        elif (data[f'd{row_num}_f_percentage'] >= 50) and (data[f'd{row_num}_f_percentage'] < 75):
+            data[f'd{row_num}_f_grade'] = 'B'
+        elif (data[f'd{row_num}_f_percentage'] >= 25) and (data[f'd{row_num}_f_percentage'] < 50):
+            data[f'd{row_num}_f_grade'] = 'C'
+        else:
+            data[f'd{row_num}_f_grade'] = 'D'
+
+
     filled_pdf = PdfWrapper("pdf/template-si.pdf").fill(data)
     
     with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp_file:
