@@ -267,13 +267,26 @@ def view_locations():
 @main.route('/pdf')
 def generate_pdf():
     qry_id = request.args.get('id', '').strip().lower()
+    qry_count = request.args.get('count', '').strip().lower()
     qry_fill_location = request.args.get('fill_location', '').strip().lower()
+    
+    if qry_count:
+        try:
+            if qry_count == 'all':
+                rec_count = 6
+            else:
+                rec_count = int(qry_count)
+        except:
+            rec_count = 6
+    else:
+        rec_count = 6
+            
     
     data = {}
     
     res_location = Location.query.get_or_404(qry_id)
-    res_forms = QuestionForm.query.filter_by(location_id=qry_id).order_by(QuestionForm.created_at.asc()).all()
-    print(res_forms)
+    res_forms = QuestionForm.query.filter_by(location_id=qry_id).order_by(QuestionForm.created_at.asc()).limit(rec_count).all()
+    print(rec_count, res_forms)
     
     if not res_forms:
             print("Form not found")
