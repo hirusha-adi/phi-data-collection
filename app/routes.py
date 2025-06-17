@@ -399,8 +399,7 @@ def generate_pdf():
         "/Author": "Hirusha Adikari",
         "/Producer": "PHI System by @hirushaadi",
         "/Title": f"H800 for {res_form.location.name_of_premise}",
-        "/Keywords": "H800 (2021),PHI,MOH,hirushaadi",
-        "/CreationDate": datetime.now().strftime("%Y%m%d%H%M%S"),
+        "/Keywords": f"H800 (2021),PHI,MOH,{res_form.location.area.name}",
         "/Creator": f"{current_user.name}",
     })
 
