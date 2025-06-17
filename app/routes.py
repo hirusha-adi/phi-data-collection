@@ -292,7 +292,7 @@ def generate_pdf():
     print(rec_count, res_forms)
     
     if not res_forms:
-            print("Form not found")
+        print("Form not found")
             
     if qry_fill_location:
         data['name_of_premise'] = res_location.name_of_premise
@@ -398,8 +398,8 @@ def generate_pdf():
     writer.add_metadata({
         "/Author": "Hirusha Adikari",
         "/Producer": "PHI System by @hirushaadi",
-        "/Title": f"H800 for {res_form.location.name_of_premise}",
-        "/Keywords": f"H800 (2021),PHI,MOH,{res_form.location.area.name}",
+        "/Title": f"H800 for {res_location.name_of_premise}",
+        "/Keywords": f"H800 (2021),PHI,MOH,{res_location.area.name}",
         "/Creator": f"{current_user.name}",
     })
 
