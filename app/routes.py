@@ -60,6 +60,7 @@ def add_form():
             form_data = request.form
 
             # Get checkbox flags
+            is_eligible_register_info = form_data.get('is_eligible_register_info') == 'on'
             is_eligible_food_handler_info = form_data.get('is_eligible_food_handler_info') == 'on'
             is_eligible_processing_info = form_data.get('is_eligible_processing_info') == 'on'
             is_eligible_food_storage_info = form_data.get('is_eligible_food_storage_info') == 'on'
@@ -72,8 +73,13 @@ def add_form():
             form.user_id = current_user.id
             
             # General
-            form.premises_registered = int(form_data.get('premises_registered'))
-            form.certificate_displayed = int(form_data.get('certificate_displayed'))
+            form.is_eligible_register_info = is_eligible_register_info
+            if is_eligible_register_info:
+                form.premises_registered = -1
+                form.certificate_displayed = -1
+            else:    
+                form.premises_registered = int(form_data.get('premises_registered'))
+                form.certificate_displayed = int(form_data.get('certificate_displayed'))
             form.not_convicted = int(form_data.get('not_convicted'))
             form.food_not_destroyed = int(form_data.get('food_not_destroyed'))
 
@@ -317,14 +323,14 @@ def generate_pdf():
         data[f'date{row_num}'] = res_form.created_at.strftime('%d/%m')
         
         # General Details
-        data[f'd{row_num}_q1_1'] = res_form.premises_registered
-        data[f'd{row_num}_q1_2'] = res_form.certificate_displayed
-        # TODO: Add this and fix later
-        # data['d1_q1_s1'] = res_form.certificate_displayed
+        if not res_form.is_eligible_food_handler_info:
+            data[f'd{row_num}_q1_1'] = res_form.premises_registered
+            data[f'd{row_num}_q1_2'] = res_form.certificate_displayed
+        else:
+            data[f'd{row_num}_q3_s1'] = 10
         data[f'd{row_num}_q1_3'] = res_form.not_convicted
         data[f'd{row_num}_q1_4'] = res_form.food_not_destroyed
-        # TODO: this might change when fixing above
-        data[f'd{row_num}_q1_sum'] = int(float(res_form.premises_registered) + float(res_form.certificate_displayed) + float(res_form.not_convicted) + float(res_form.food_not_destroyed))
+        data[f'd{row_num}_q1_sum'] = res_form.sum_general_details
         
         # Building Details
         data[f'd{row_num}_q2_1'] = res_form.safe_water
@@ -332,7 +338,7 @@ def generate_pdf():
         data[f'd{row_num}_q2_3'] = res_form.pests_animals
         data[f'd{row_num}_q2_4'] = res_form.sound_pollution
         data[f'd{row_num}_q2_5'] = res_form.toilets_cleanliness
-        data[f'd{row_num}_q2_sum'] = int(float(res_form.safe_water) + float(res_form.cleanliness) + float(res_form.pests_animals) + float(res_form.sound_pollution) + float(res_form.toilets_cleanliness))
+        data[f'd{row_num}_q2_sum'] = res_form.sum_building_details
         
         # Food Handler
         if not res_form.is_eligible_food_handler_info:
@@ -340,7 +346,7 @@ def generate_pdf():
             data[f'd{row_num}_q3_2'] = res_form.proper_clothing
             data[f'd{row_num}_q3_3'] = res_form.unhygienic_behaviour
             data[f'd{row_num}_q3_4'] = res_form.clean_utensils
-            data[f'd{row_num}_q3_sum'] = int(float(res_form.medical_certificates) + float(res_form.proper_clothing) + float(res_form.unhygienic_behaviour) + float(res_form.clean_utensils))
+            data[f'd{row_num}_q3_sum'] = res_form.sum_food_handler
         else:
             data[f'd{row_num}_q3_s1'] = 20
             data[f'd{row_num}_q3_sum'] = 20
@@ -353,7 +359,7 @@ def generate_pdf():
             data[f'd{row_num}_q4_4'] = res_form.food_surfaces_clean
             data[f'd{row_num}_q4_5'] = res_form.wastewater_disposal
             data[f'd{row_num}_q4_6'] = res_form.closed_bins
-            data[f'd{row_num}_q4_sum'] = int(float(res_form.walls_hygienic) + float(res_form.floor_hygienic) + float(res_form.ceiling_hygienic) + float(res_form.food_surfaces_clean) + float(res_form.wastewater_disposal) + float(res_form.closed_bins))
+            data[f'd{row_num}_q4_sum'] = res_form.sum_processing_and_serving
         else:
             data[f'd{row_num}_q4_s1'] = 20
             data[f'd{row_num}_q4_sum'] = 20
@@ -365,15 +371,13 @@ def generate_pdf():
             data[f'd{row_num}_q5_3'] = res_form.cooked_food_container
             data[f'd{row_num}_q5_4'] = res_form.cooked_food_contam_prevented
             # leave d1_q5_s1 empty
-            data[f'd{row_num}_q5_5'] = res_form.uncooked_food_contam_prevented
-            data[f'd{row_num}_q5_sum'] = int(float(res_form.cooked_food_closed) + float(res_form.cooked_food_temp) + float(res_form.cooked_food_container) + float(res_form.cooked_food_contam_prevented) + float(res_form.uncooked_food_contam_prevented))
         else:
             data[f'd{row_num}_q5_s1'] = 16
-            data[f'd{row_num}_q5_5'] = res_form.uncooked_food_contam_prevented
-            data[f'd{row_num}_q5_sum'] = int(data['d1_q5_s1'] + float(res_form.uncooked_food_contam_prevented))
+        data[f'd{row_num}_q5_5'] = res_form.uncooked_food_contam_prevented
+        data[f'd{row_num}_q5_sum'] = res_form.sum_food_storage
         
         # Final Stuff
-        data[f'd{row_num}_f_sum'] = data[f'd{row_num}_q1_sum'] + data[f'd{row_num}_q2_sum'] + data[f'd{row_num}_q3_sum'] + data[f'd{row_num}_q4_sum'] + data[f'd{row_num}_q5_sum']
+        data[f'd{row_num}_f_sum'] = res_form.sum_all
         data[f'd{row_num}_f_percentage'] = int((data[f'd{row_num}_f_sum'] / 100) * 100)
         
         # The grading is done as follows, based on the percentage:

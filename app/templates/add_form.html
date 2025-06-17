@@ -24,6 +24,13 @@
 
 
         <h4 class="font-semibold mt-6">General Details</h4>
+        <div class="form-control">
+          <label class="cursor-pointer label">
+            <span class="label-text">This location does NOT need to be registered</span>
+            <input type="checkbox" name="is_eligible_register_info" id="chk-general"
+              class="checkbox checkbox-error" />
+          </label>
+        </div>
         {% for field in [
         ('premises_registered', 'Premises registered under regulation'),
         ('certificate_displayed', 'Registration certificate displayed'),
@@ -35,6 +42,7 @@
           <select name="{{ field[0] }}" class="select select-bordered w-full" required>
             <option value="5">Yes (5)</option>
             <option value="0" selected>No (0)</option>
+            <option value="-1" disabled hidden>Not Applicable (-1)</option>
           </select>
         </div>
         {% endfor %}
@@ -163,6 +171,12 @@
       }
     });
   }
+
+  $('#chk-general').on('change', function () {
+    toggleSection('#chk-general', [
+      'premises_registered', 'certificate_displayed'
+    ]);
+  });
 
   $('#chk-food-handler').on('change', function () {
     toggleSection('#chk-food-handler', [
