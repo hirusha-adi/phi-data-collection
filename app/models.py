@@ -99,8 +99,9 @@ class QuestionForm(db.Model):
     uncooked_food_contam_prevented = db.Column(db.Integer, nullable=False)
     sum_food_storage = db.Column(db.Integer, nullable=False)
     
-    # Sum All
+    # Finals
     sum_all = db.Column(db.Integer, nullable=False)
+    grade = db.Column(db.String(1), nullable=False)
 
     # Inspection Record - Location relationship
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=False)
