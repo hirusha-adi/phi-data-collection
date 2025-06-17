@@ -304,6 +304,7 @@ def generate_pdf():
         data['name_of_premise'] = res_location.name_of_premise
         data['address_of_premise'] = res_location.address_of_premise
         data['gs_area'] = res_location.gs_area
+        data['category_of_premise'] = res_location.category_of_premise
         data['owner_name'] = res_location.owner_name
         data['owner_nic'] = res_location.owner_nic
         data['owner_address'] = res_location.owner_address
