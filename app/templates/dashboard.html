@@ -72,11 +72,11 @@
             <p><strong>Area:</strong> {{ form.location.area.name }}</p>
             <p><strong>Owned by:</strong> {{ form.location.owner_name }}</p>
             <p><strong>Contact No.:</strong> {{ form.location.contact_number }}</p>
-            <p><strong>Sum - General:</strong> {{ form.sum_general_details }}</p>
-            <p><strong>Sum - Building:</strong> {{ form.sum_building_details }}</p>
-            <p><strong>Sum - Food Handler:</strong> {{ form.sum_food_handler }}</p>
-            <p><strong>Sum - Processing and/or Serving:</strong> {{ form.sum_processing_and_serving }}</p>
-            <p><strong>Sum - Food Storage:</strong> {{ form.sum_food_storage }}</p>
+            <p><strong>Subtotal - General:</strong> {{ form.sum_general_details }}</p>
+            <p><strong>Subtotal - Building:</strong> {{ form.sum_building_details }}</p>
+            <p><strong>Subtotal - Food Handler:</strong> {{ form.sum_food_handler }}</p>
+            <p><strong>Subtotal - Processing and/or Serving:</strong> {{ form.sum_processing_and_serving }}</p>
+            <p><strong>Subtotal - Food Storage:</strong> {{ form.sum_food_storage }}</p>
             <p><strong>Final Score:</strong> {{ form.sum_all }}</p>
             <p><strong>Grade:</strong> {{ form.grade }}</p>
           </div>
@@ -85,7 +85,7 @@
             <a href="{{ url_for('main.edit_form', form_id=form.id) }}" class="btn btn-sm btn-soft btn-primary">✏️ Edit</a>
             <a href="{{ url_for('main.view_forms', location_id=form.id) }}" class="btn btn-sm btn-soft btn-primary">↗ Details</a>
           </div>
-          
+
         </div>
       </div>
     </li>
