@@ -13,6 +13,9 @@ class User(UserMixin, db.Model):
 class Area(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True)
+    
+    def __repr__(self):
+        return f'<Area {self.id} Name:- {self.name}>' 
 
 
 class Location(db.Model):
@@ -36,6 +39,9 @@ class Location(db.Model):
     # Contact Number
     contact_number = db.Column(db.String(20), nullable=False)  # Contact of premise
     owner_contact_number = db.Column(db.String(20), nullable=False)  # Contact of owner
+    
+    def __repr__(self):
+        return f"<Location {self.id} name_of_premise:- {self.name_of_premise} owner_name: {self.owner_name}>"
     
     
 class QuestionForm(db.Model):
@@ -93,3 +99,5 @@ class QuestionForm(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('forms', lazy=True))
 
+    def __repr__(self):
+        return f"<QuestionForm {self.id} created_at: {self.created_at} location_name:- {self.location.name_of_premise}>"
