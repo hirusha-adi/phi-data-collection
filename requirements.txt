@@ -13,3 +13,4 @@ reportlab===4.4.1
 cffi===1.17.1
 cryptography===45.0.4
 pypdfform===2.5.0
+pypdf2===3.0.1

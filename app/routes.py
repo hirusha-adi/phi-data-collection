@@ -8,6 +8,7 @@ from PyPDFForm import PdfWrapper
 import os, tempfile
 from flask import after_this_request
 from datetime import datetime
+from PyPDF2 import PdfReader, PdfWriter
 
 main = Blueprint('main', __name__)
 
@@ -234,6 +235,7 @@ def add_location():
     return render_template('add_location.html', areas=areas)
 
 @main.route('/locations')
+@login_required
 def view_locations():
     search = request.args.get('search', '').strip().lower()
     area_id_raw = request.args.get('area_id', '').strip()
@@ -265,6 +267,7 @@ def view_locations():
     return render_template('locations.html', locations=locations, areas=areas, selected_area_id=area_id)
 
 @main.route('/pdf')
+@login_required
 def generate_pdf():
     qry_id = request.args.get('id', '').strip().lower()
     qry_count = request.args.get('count', '').strip().lower()
@@ -387,6 +390,24 @@ def generate_pdf():
         tmp_file.write(filled_pdf.read())
         tmp_file_path = tmp_file.name
     
+    # Set metadata using PyPDF2
+    reader = PdfReader(tmp_file_path)
+    writer = PdfWriter()
+
+    writer.append_pages_from_reader(reader)
+    writer.add_metadata({
+        "/Author": "Hirusha Adikari",
+        "/Producer": "PHI System by @hirushaadi",
+        "/Title": f"H800 for {res_form.location.name_of_premise}",
+        "/Keywords": "H800 (2021),PHI,MOH,hirushaadi",
+        "/CreationDate": datetime.now().strftime("%Y%m%d%H%M%S"),
+        "/Creator": f"{current_user.name}",
+    })
+
+    # Save the updated PDF with metadata
+    with open(tmp_file_path, "wb") as f:
+        writer.write(f)
+        
     @after_this_request
     def remove_file(response):
         try:
