@@ -19,13 +19,12 @@
   <div class="space-y-3 mb-6">
     <a href="{{ url_for('main.add_form') }}" class="btn btn-success w-full">➕ New Inspection</a>
     <a href="{{ url_for('main.add_location') }}" class="btn btn-primary w-full">➕ Add New Location</a>
-    <!-- TODO: Update this URL -->
     <a href="{{ url_for('main.view_locations') }}" class="btn btn-outline w-full">📍 All Locations</a>
   </div>
 
   <!-- Locations -->
   <h3 class="text-lg font-semibold mb-3">Recently added locations</h3>
-  <div class="bg-base-100 rounded-box mb-6 divide-y divide-base-300 max-h-60 overflow-y-auto shadow w-full">
+  <div class="bg-base-100 rounded-box mb-6 divide-y divide-base-300 max-h-[64vh] overflow-y-auto shadow w-full">
     <ul class="menu w-full">
       {% for location in locations %}
         <li class="w-full">
@@ -45,27 +44,56 @@
   </div>
 
   <!-- Inspection Forms -->
-  <h3 class="text-lg font-semibold mb-3">Recent inspections</h3>
-  <ul class="space-y-3">
+<h3 class="text-lg font-semibold mb-3">Recent Inspections</h3>
+
+<div class="rounded-box mb-6 divide-y divide-base-300 max-h-[70vh] overflow-y-auto">
+  <ul class="space-y-3 px-2 py-2">
     {% for form in forms %}
-      <div class="collapse collapse-arrow border border-base-300 rounded-lg bg-base-100">
-        <input type="radio" name="accordion" {% if loop.first %}checked{% endif %} />
-        <div class="collapse-title font-medium text-sm">
-          {{ form.location.name }}, {{ form.location.area.name }} <br>
-          <span class="text-xs text-gray-500">
-            on {{ form.created_at.strftime('%Y-%m-%d %H:%M') }}
-            <br>
-            by {{ form.user.name }}
-          </span>
-        </div>
-        <div class="collapse-content text-sm">
-          <p><strong>Cockroaches:</strong> {{ 'Yes' if form.cockroaches else 'No' }}</p>
-          <p><strong>Last Updated:</strong> {{ form.last_updated.strftime('%Y-%m-%d %H:%M') }}</p>
-          <a href="{{ url_for('main.edit_form', form_id=form.id) }}" class="btn btn-sm btn-outline btn-primary mt-3">✏️ Edit</a>
+    <li>
+      <div class="card bg-base-100 shadow-sm">
+        <div class="card-body space-y-2">
+          <!-- Header with title and badge -->
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="card-title text-primary">
+                <a href="{{ url_for('main.view_forms', location_id=form.id) }}">
+                  {{ form.location.name_of_premise }}
+                </a>
+              </h2>
+              <p class="text-xs text-gray-500 mt-1">
+                at {{ form.created_at.strftime('%Y-%m-%d %I:%M %p') }}
+              </p>
+            </div>
+            <span class="badge badge-secondary">{{ form.sum_all }}%</span>
+          </div>
+
+
+          <!-- Details -->
+          <div class="text-sm leading-relaxed">
+            <p><strong>Location:</strong> {{ form.location.name_of_premise }}</p>
+            <p><strong>Area:</strong> {{ form.location.area.name }}</p>
+            <p><strong>Owned by:</strong> {{ form.location.owner_name }}</p>
+            <p><strong>Contact No.:</strong> {{ form.location.contact_number }}</p>
+            <p><strong>Sum - General:</strong> {{ form.sum_general_details }}</p>
+            <p><strong>Sum - Building:</strong> {{ form.sum_building_details }}</p>
+            <p><strong>Sum - Food Handler:</strong> {{ form.sum_food_handler }}</p>
+            <p><strong>Sum - Processing and/or Serving:</strong> {{ form.sum_processing_and_serving }}</p>
+            <p><strong>Sum - Food Storage:</strong> {{ form.sum_food_storage }}</p>
+            <p><strong>Final Score:</strong> {{ form.sum_all }}</p>
+            <p><strong>Grade:</strong> {{ form.grade }}</p>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex justify-end gap-3 pt-2">
+            <a href="{{ url_for('main.edit_form', form_id=form.id) }}" class="btn btn-sm btn-soft btn-primary">✏️ Edit</a>
+            <a href="{{ url_for('main.view_forms', location_id=form.id) }}" class="btn btn-sm btn-soft btn-primary">↗ Details</a>
+          </div>
         </div>
       </div>
+    </li>
     {% endfor %}
   </ul>
+</div>
 
 </div>
 
