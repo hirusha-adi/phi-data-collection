@@ -112,6 +112,7 @@
             {% if field[0] in ['wastewater_disposal', 'closed_bins'] %}
             <option value="2">Yes (2)</option>
             <option value="0" selected>No (0)</option>
+            <option value="-1" disabled hidden>Not Applicable (-1)</option>
             {% else %}
             <option value="4">Good (4)</option>
             <option value="2">Statisfactory (2)</option>

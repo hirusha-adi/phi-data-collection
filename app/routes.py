@@ -335,11 +335,11 @@ def generate_pdf():
         data[f'date{row_num}'] = res_form.created_at.strftime('%d/%m')
         
         # General Details
-        if not res_form.is_eligible_food_handler_info:
+        if not res_form.is_eligible_register_info:
             data[f'd{row_num}_q1_1'] = res_form.premises_registered
             data[f'd{row_num}_q1_2'] = res_form.certificate_displayed
         else:
-            data[f'd{row_num}_q3_s1'] = 10
+            data[f'd{row_num}_q1_s1'] = 10
         data[f'd{row_num}_q1_3'] = res_form.not_convicted
         data[f'd{row_num}_q1_4'] = res_form.food_not_destroyed
         data[f'd{row_num}_q1_sum'] = res_form.sum_general_details
