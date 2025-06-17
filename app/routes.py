@@ -141,7 +141,6 @@ def add_form():
 
     return render_template('add_form.html', locations=locations)
 
-
 @main.route('/forms/<int:location_id>')
 @login_required
 def view_forms(location_id):
@@ -173,8 +172,6 @@ def edit_form(form_id):
             flash("Invalid input. Please try again.", "error")
 
     return render_template('edit_form.html', form_record=form_record, locations=locations)
-
-
 
 @main.route('/delete_form/<int:form_id>')
 @login_required
