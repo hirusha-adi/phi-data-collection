@@ -46,11 +46,8 @@
           <div class="flex items-center justify-between">
             <div>
               <h2 class="card-title text-primary">
-                {{ form.location.name_of_premise }}
+                {{ form.created_at.strftime('%Y-%m-%d') }} ({{ form.id }})
               </h2>
-              <p class="text-xs text-gray-500 mt-1">
-                🕒 {{ form.created_at.strftime('%Y-%m-%d %I:%M %p') }}
-              </p>
             </div>
             <span class="badge badge-secondary">{{ form.sum_all }}%</span>
           </div>
@@ -130,9 +127,9 @@
 
           {% if form.user.id == current_user.id %}
           <div class="flex justify-end gap-3 pt-2">
-            <a href="{{ url_for('main.edit_form', form_id=form.id) }}" class="btn btn-sm btn-outline btn-primary">✏️
+            <a href="{{ url_for('main.edit_form', form_id=form.id) }}" class="btn btn-sm btn-soft btn-primary">✏️
               Edit</a>
-            <a href="{{ url_for('main.delete_form', form_id=form.id) }}" class="btn btn-sm btn-outline btn-error"
+            <a href="{{ url_for('main.delete_form', form_id=form.id) }}" class="btn btn-sm btn-soft btn-error"
               onclick="return confirm('Are you sure you want to delete this?')">🗑 Delete</a>
           </div>
           {% endif %}
