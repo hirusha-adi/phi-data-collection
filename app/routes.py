@@ -145,7 +145,7 @@ def add_form():
 @main.route('/forms/<int:location_id>')
 @login_required
 def view_forms(location_id):
-    forms = QuestionForm.query.filter_by(location_id=location_id).all()
+    forms = QuestionForm.query.filter_by(location_id=location_id).order_by(QuestionForm.created_at.desc()).all()
     location = Location.query.get_or_404(location_id)
     return render_template('view_forms.html', forms=forms, location=location)
 
