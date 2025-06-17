@@ -277,7 +277,7 @@ def gen_pdf():
 def generate_pdf():
     qry_id = request.args.get('id', '').strip().lower()
     qry_count = request.args.get('count', '').strip().lower()
-    qry_fill_location = request.args.get('fill_location', '').strip().lower()
+    qry_fill_location = request.args.get('fill_location', '').strip()== "1"
     
     if qry_count:
         try:

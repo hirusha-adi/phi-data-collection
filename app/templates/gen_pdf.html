@@ -7,24 +7,42 @@
     <div class="card-body space-y-4">
       <h2 class="text-2xl font-bold text-center">📝 New Inspection</h2>
 
-      <form method="POST" class="space-y-6">
+      <form method="GET" action="{{ url_for('main.generate_pdf') }}" class="space-y-6">
+
         <div>
           <label class="label font-medium">Select Location</label>
-          <select name="location" class="select select-bordered w-full" required>
+          <select name="id" class="select select-bordered w-full" required>
             <option value="" disabled {% if not request.args.get('location_id') %}selected{% endif %}>-- Choose Location --</option>
             {% for location in locations %}
-            <option value="{{ location.id }}" 
-              {% if request.args.get('location_id') and request.args.get('location_id')|int==location.id %} selected {% endif %}
-            >
+            <option value="{{ location.id }}"
+              {% if request.args.get('location_id') and request.args.get('location_id')|int == location.id %}selected{% endif %}>
               {{ location.name_of_premise }} - {{ location.area.name }}
             </option>
             {% endfor %}
           </select>
         </div>
+
+        <div>
+          <label class="label font-medium">How many latest forms?</label>
+          <select name="count" class="select select-bordered w-full">
+            {% for i in range(6, 0, -1) %}
+            <option value="{{ i }}">Last {{ i }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-control">
+          <label class="cursor-pointer label">
+            <span class="label-text font-medium">Include Location Details in PDF?</span>
+            <input type="checkbox" name="fill_location" value="1"
+              class="checkbox checkbox-primary" checked
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-full">📄 Generate PDF</button>
       </form>
 
       <a href="{{ url_for('main.dashboard') }}" class="btn btn-ghost w-full my-6">⬅ Back to Dashboard</a>
-      
     </div>
   </div>
 </div>
