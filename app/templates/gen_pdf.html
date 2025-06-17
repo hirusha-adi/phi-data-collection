@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block title %}Generate PDF{% endblock %}
+{% block content %}
+
+<div class="max-w-md mx-auto px-0 py-6 min-h-screen">
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body space-y-4">
+      <h2 class="text-2xl font-bold text-center">📝 New Inspection</h2>
+
+      <form method="POST" class="space-y-6">
+        <div>
+          <label class="label font-medium">Select Location</label>
+          <select name="location" class="select select-bordered w-full" required>
+            <option value="" disabled {% if not request.args.get('location_id') %}selected{% endif %}>-- Choose Location --</option>
+            {% for location in locations %}
+            <option value="{{ location.id }}" 
+              {% if request.args.get('location_id') and request.args.get('location_id')|int==location.id %} selected {% endif %}
+            >
+              {{ location.name_of_premise }} - {{ location.area.name }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+      </form>
+
+      <a href="{{ url_for('main.dashboard') }}" class="btn btn-ghost w-full my-6">⬅ Back to Dashboard</a>
+      
+    </div>
+  </div>
+</div>
+
+{% endblock %}

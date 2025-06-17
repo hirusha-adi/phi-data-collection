@@ -266,6 +266,12 @@ def view_locations():
 
     return render_template('locations.html', locations=locations, areas=areas, selected_area_id=area_id)
 
+@main.route("/gen_pdf")
+@login_required
+def gen_pdf():
+    locations = Location.query.all()
+    return render_template('gen_pdf.html', locations=locations)
+
 @main.route('/pdf')
 @login_required
 def generate_pdf():
