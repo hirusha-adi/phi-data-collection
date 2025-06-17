@@ -52,7 +52,7 @@
     <li>
       <div class="card bg-base-100 shadow-sm">
         <div class="card-body space-y-2">
-          <!-- Header with title and badge -->
+
           <div class="flex items-center justify-between">
             <div>
               <h2 class="card-title text-primary">
@@ -67,8 +67,6 @@
             <span class="badge badge-secondary">{{ form.sum_all }}%</span>
           </div>
 
-
-          <!-- Details -->
           <div class="text-sm leading-relaxed">
             <p><strong>Location:</strong> {{ form.location.name_of_premise }}</p>
             <p><strong>Area:</strong> {{ form.location.area.name }}</p>
@@ -83,11 +81,11 @@
             <p><strong>Grade:</strong> {{ form.grade }}</p>
           </div>
 
-          <!-- Actions -->
           <div class="flex justify-end gap-3 pt-2">
             <a href="{{ url_for('main.edit_form', form_id=form.id) }}" class="btn btn-sm btn-soft btn-primary">✏️ Edit</a>
             <a href="{{ url_for('main.view_forms', location_id=form.id) }}" class="btn btn-sm btn-soft btn-primary">↗ Details</a>
           </div>
+          
         </div>
       </div>
     </li>
