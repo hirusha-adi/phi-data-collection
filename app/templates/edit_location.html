@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+{% block title %}Edit Location{% endblock %}
+{% block content %}
+
+<div class="max-w-md mx-auto px-0 py-6 min-h-screen">
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body space-y-4">
+      <h1 class="text-2xl font-bold text-center">Edit Location</h1>
+
+      <form method="POST" class="space-y-4">
+        <div>
+          <label class="label text-sm font-medium">PHI Area</label>
+          <select name="area_id" class="select select-bordered w-full" required>
+            <option disabled>Select Area</option>
+            {% for area in areas %}
+            <option value="{{ area.id }}" {% if area.id == location.area_id %}selected{% endif %}>
+              {{ area.name }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div>
+          <label class="label text-sm font-medium">Name of the Premise</label>
+          <input type="text" name="name_of_premise" value="{{ location.name_of_premise }}"
+            class="input input-bordered w-full" required />
+        </div>
+
+        <div>
+          <label class="label text-sm font-medium">Address of the Premise</label>
+          <input type="text" name="address_of_premise" value="{{ location.address_of_premise }}"
+            class="input input-bordered w-full" required />
+        </div>
+
+        <div>
+          <label class="label text-sm font-medium">GS Area</label>
+          <input type="text" name="gs_area" value="{{ location.gs_area }}" class="input input-bordered w-full"
+            required />
+        </div>
+
+        <div>
+          <label class="label text-sm font-medium">Category of Premise</label>
+          <input type="text" name="category_of_premise" value="{{ location.category_of_premise }}"
+            class="input input-bordered w-full" required />
+        </div>
+
+        <div>
+          <label class="label text-sm font-medium">Owner's Name</label>
+          <input type="text" name="owner_name" value="{{ location.owner_name }}" class="input input-bordered w-full"
+            required />
+        </div>
+
+        <div>
+          <label class="label text-sm font-medium">Owner's NIC</label>
+          <input type="text" name="owner_nic" value="{{ location.owner_nic }}" class="input input-bordered w-full"
+            required />
+        </div>
+
+        <div>
+          <label class="label text-sm font-medium">Owner's Address</label>
+          <input type="text" name="owner_address" value="{{ location.owner_address }}"
+            class="input input-bordered w-full" required />
+        </div>
+
+        <div>
+          <label class="label text-sm font-medium">Contact Number of Premise</label>
+          <input type="text" name="contact_number" value="{{ location.contact_number }}"
+            class="input input-bordered w-full" required />
+        </div>
+
+        <div>
+          <label class="label text-sm font-medium">Owner's Contact Number</label>
+          <input type="text" name="owner_contact_number" value="{{ location.owner_contact_number }}"
+            class="input input-bordered w-full" required />
+        </div>
+
+        <button type="submit" class="btn btn-success w-full">✅ Save Changes</button>
+      </form>
+
+      <a href="{{ url_for('main.dashboard') }}" class="btn btn-ghost w-full">⬅ Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
