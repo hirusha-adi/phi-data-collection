@@ -424,6 +424,8 @@ def edit_location(location_id):
         location.contact_number = request.form.get('contact_number', '').strip()
         location.owner_contact_number = request.form.get('owner_contact_number', '').strip()
 
+        # TODO: think about this later
+        # maybe remove it... huh
         if all([
             location.area_id, location.name_of_premise, location.address_of_premise,
             location.gs_area, location.category_of_premise, location.owner_name,
