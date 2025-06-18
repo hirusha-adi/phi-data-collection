@@ -6,10 +6,11 @@
   <div class="card bg-base-100 shadow-xl">
     <div class="card-body space-y-4">
       <h2 class="text-2xl font-bold text-center">✏️ Edit Inspection</h2>
+      <div class="text-md italic text-center text-gray-700">Created at: {{ form.created_at }} <br> by {{ form.user.name }}</div>
 
       <form method="POST" class="space-y-6">
         <div>
-          <label class="label font-medium">Select Location</label>
+          <label class="label font-medium">Location</label>
           <select name="location" class="select select-bordered w-full" required disabled>
             {% for location in locations %}
             <option value="{{ location.id }}" 

@@ -5,16 +5,19 @@ from . import db, login_manager
 from .models import User, Area, Location, QuestionForm
 from .forms import LoginForm, QuestionEntryForm
 from PyPDFForm import PdfWrapper
-import os, tempfile
+import os
+import tempfile
 from flask import after_this_request
 from datetime import datetime
 from PyPDF2 import PdfReader, PdfWriter
 
 main = Blueprint('main', __name__)
 
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
 
 @main.route('/', methods=['GET', 'POST'])
 def login():
@@ -33,8 +36,9 @@ def login():
 
     if current_user.is_authenticated:
         return redirect(url_for('main.dashboard'))
-    
+
     return render_template('login.html')
+
 
 @main.route('/logout')
 @login_required
@@ -42,11 +46,13 @@ def logout():
     logout_user()
     return redirect(url_for('main.login'))
 
+
 @main.route('/dashboard')
 @login_required
 def dashboard():
     locations = Location.query.limit(10).all()
-    forms = QuestionForm.query.order_by(QuestionForm.created_at.desc()).limit(10).all()
+    forms = QuestionForm.query.order_by(
+        QuestionForm.created_at.desc()).limit(10).all()
     return render_template('dashboard.html', locations=locations, forms=forms)
 
 
@@ -56,116 +62,150 @@ def add_form():
     locations = Location.query.all()
 
     if request.method == 'POST':
-        try:
-            form_data = request.form
+        form_data = request.form
 
-            # Get checkbox flags
-            is_eligible_register_info = form_data.get('is_eligible_register_info') == 'on'
-            is_eligible_food_handler_info = form_data.get('is_eligible_food_handler_info') == 'on'
-            is_eligible_processing_info = form_data.get('is_eligible_processing_info') == 'on'
-            is_eligible_food_storage_info = form_data.get('is_eligible_food_storage_info') == 'on'
-            
-            # Create a new form instance
-            form = QuestionForm()
+        # Get checkbox flags
+        is_eligible_register_info = form_data.get(
+            'is_eligible_register_info') == 'on'
+        is_eligible_food_handler_info = form_data.get(
+            'is_eligible_food_handler_info') == 'on'
+        is_eligible_processing_info = form_data.get(
+            'is_eligible_processing_info') == 'on'
+        is_eligible_food_storage_info = form_data.get(
+            'is_eligible_food_storage_info') == 'on'
 
-            # Relationships
-            form.location_id = int(form_data.get('location'))
-            form.user_id = current_user.id
-            
-            # General
-            form.is_eligible_register_info = is_eligible_register_info
-            if is_eligible_register_info:
-                form.premises_registered = -1
-                form.certificate_displayed = -1
-                form.not_convicted = int(form_data.get('not_convicted'))
-                form.food_not_destroyed = int(form_data.get('food_not_destroyed'))
-                form.sum_general_details = 10 + form.not_convicted + form.food_not_destroyed
-            else:    
-                form.premises_registered = int(form_data.get('premises_registered'))
-                form.certificate_displayed = int(form_data.get('certificate_displayed'))
-                form.not_convicted = int(form_data.get('not_convicted'))
-                form.food_not_destroyed = int(form_data.get('food_not_destroyed'))
-                form.sum_general_details = form.premises_registered + form.certificate_displayed + form.not_convicted + form.food_not_destroyed
+        # Create a new form instance
+        form = QuestionForm()
 
-            # Building
-            form.safe_water = int(form_data.get('safe_water'))
-            form.cleanliness = int(form_data.get('cleanliness'))
-            form.pests_animals = int(form_data.get('pests_animals'))
-            form.sound_pollution = int(form_data.get('sound_pollution'))
-            form.toilets_cleanliness = int(form_data.get('toilets_cleanliness'))
-            form.sum_building_details = form.safe_water + form.cleanliness + form.pests_animals + form.sound_pollution + form.toilets_cleanliness
-            
-            # Food Handler
-            form.is_eligible_food_handler_info = is_eligible_food_handler_info
-            if is_eligible_food_handler_info:
-                form.medical_certificates = -1
-                form.proper_clothing = -1
-                form.unhygienic_behaviour = -1
-                form.clean_utensils = -1
-                form.sum_food_handler = 20
-            else:
-                form.medical_certificates = int(form_data.get('medical_certificates'))
-                form.proper_clothing = int(form_data.get('proper_clothing'))
-                form.unhygienic_behaviour = int(form_data.get('unhygienic_behaviour'))
-                form.clean_utensils = int(form_data.get('clean_utensils'))
-                form.sum_food_handler = form.medical_certificates + form.proper_clothing + form.unhygienic_behaviour + form.clean_utensils
-            
-            # Processing and Serving
-            form.is_eligible_processing_info = is_eligible_processing_info
-            if is_eligible_processing_info:
-                form.walls_hygienic = -1
-                form.floor_hygienic = -1
-                form.ceiling_hygienic = -1
-                form.food_surfaces_clean = -1
-                form.wastewater_disposal = -1
-                form.closed_bins = -1
-                form.sum_processing_and_serving = 20
-            else:
-                form.walls_hygienic = int(form_data.get('walls_hygienic'))
-                form.floor_hygienic = int(form_data.get('floor_hygienic'))
-                form.ceiling_hygienic = int(form_data.get('ceiling_hygienic'))
-                form.food_surfaces_clean = int(form_data.get('food_surfaces_clean'))
-                form.wastewater_disposal = int(form_data.get('wastewater_disposal'))
-                form.closed_bins = int(form_data.get('closed_bins'))
-                form.sum_processing_and_serving = form.walls_hygienic + form.floor_hygienic + form.ceiling_hygienic + form.food_surfaces_clean + form.wastewater_disposal + form.closed_bins
-                
-            # Food Storage
-            form.is_eligible_food_storage_info = is_eligible_food_storage_info
-            if is_eligible_food_storage_info:
-                form.cooked_food_closed = -1
-                form.cooked_food_temp = -1
-                form.cooked_food_container = -1
-                form.cooked_food_contam_prevented = -1
-                form.uncooked_food_contam_prevented = int(form_data.get('uncooked_food_contam_prevented'))
-                form.sum_food_storage = 16 + form.uncooked_food_contam_prevented
-            else:
-                form.cooked_food_closed = int(form_data.get('cooked_food_closed'))
-                form.cooked_food_temp = int(form_data.get('cooked_food_temp'))
-                form.cooked_food_container = int(form_data.get('cooked_food_container'))
-                form.cooked_food_contam_prevented = int(form_data.get('cooked_food_contam_prevented'))
-                form.uncooked_food_contam_prevented = int(form_data.get('uncooked_food_contam_prevented'))
-                form.sum_food_storage = form.cooked_food_closed + form.cooked_food_temp + form.cooked_food_container + form.cooked_food_contam_prevented + form.uncooked_food_contam_prevented
-            
-            form.sum_all = form.sum_general_details + form.sum_building_details + form.sum_food_handler + form.sum_processing_and_serving + form.sum_food_storage  
-            
-            db.session.add(form)
-            db.session.commit()
+        # Relationships
+        form.location_id = int(form_data.get('location'))
+        form.user_id = current_user.id
 
-            flash("Inspection form saved successfully!", "success")
-            return redirect(url_for('main.dashboard'))
+        # General
+        form.is_eligible_register_info = is_eligible_register_info
+        if is_eligible_register_info:
+            form.premises_registered = -1
+            form.certificate_displayed = -1
+            form.not_convicted = int(form_data.get('not_convicted'))
+            form.food_not_destroyed = int(
+                form_data.get('food_not_destroyed'))
+            form.sum_general_details = 10 + form.not_convicted + form.food_not_destroyed
+        else:
+            form.premises_registered = int(
+                form_data.get('premises_registered'))
+            form.certificate_displayed = int(
+                form_data.get('certificate_displayed'))
+            form.not_convicted = int(form_data.get('not_convicted'))
+            form.food_not_destroyed = int(
+                form_data.get('food_not_destroyed'))
+            form.sum_general_details = form.premises_registered + \
+                form.certificate_displayed + form.not_convicted + form.food_not_destroyed
 
-        except Exception as e:
-            db.session.rollback()
-            flash(f"Error occurred: {str(e)}", "danger")
+        # Building
+        form.safe_water = int(form_data.get('safe_water'))
+        form.cleanliness = int(form_data.get('cleanliness'))
+        form.pests_animals = int(form_data.get('pests_animals'))
+        form.sound_pollution = int(form_data.get('sound_pollution'))
+        form.toilets_cleanliness = int(
+            form_data.get('toilets_cleanliness'))
+        form.sum_building_details = form.safe_water + form.cleanliness + \
+            form.pests_animals + form.sound_pollution + form.toilets_cleanliness
+
+        # Food Handler
+        form.is_eligible_food_handler_info = is_eligible_food_handler_info
+        if is_eligible_food_handler_info:
+            form.medical_certificates = -1
+            form.proper_clothing = -1
+            form.unhygienic_behaviour = -1
+            form.clean_utensils = -1
+            form.sum_food_handler = 20
+        else:
+            form.medical_certificates = int(
+                form_data.get('medical_certificates'))
+            form.proper_clothing = int(form_data.get('proper_clothing'))
+            form.unhygienic_behaviour = int(
+                form_data.get('unhygienic_behaviour'))
+            form.clean_utensils = int(form_data.get('clean_utensils'))
+            form.sum_food_handler = form.medical_certificates + \
+                form.proper_clothing + form.unhygienic_behaviour + form.clean_utensils
+
+        # Processing and Serving
+        form.is_eligible_processing_info = is_eligible_processing_info
+        if is_eligible_processing_info:
+            form.walls_hygienic = -1
+            form.floor_hygienic = -1
+            form.ceiling_hygienic = -1
+            form.food_surfaces_clean = -1
+            form.wastewater_disposal = -1
+            form.closed_bins = -1
+            form.sum_processing_and_serving = 20
+        else:
+            form.walls_hygienic = int(form_data.get('walls_hygienic'))
+            form.floor_hygienic = int(form_data.get('floor_hygienic'))
+            form.ceiling_hygienic = int(form_data.get('ceiling_hygienic'))
+            form.food_surfaces_clean = int(
+                form_data.get('food_surfaces_clean'))
+            form.wastewater_disposal = int(
+                form_data.get('wastewater_disposal'))
+            form.closed_bins = int(form_data.get('closed_bins'))
+            form.sum_processing_and_serving = form.walls_hygienic + form.floor_hygienic + \
+                form.ceiling_hygienic + form.food_surfaces_clean + \
+                form.wastewater_disposal + form.closed_bins
+
+        # Food Storage
+        form.is_eligible_food_storage_info = is_eligible_food_storage_info
+        if is_eligible_food_storage_info:
+            form.cooked_food_closed = -1
+            form.cooked_food_temp = -1
+            form.cooked_food_container = -1
+            form.cooked_food_contam_prevented = -1
+            form.uncooked_food_contam_prevented = int(
+                form_data.get('uncooked_food_contam_prevented'))
+            form.sum_food_storage = 16 + form.uncooked_food_contam_prevented
+        else:
+            form.cooked_food_closed = int(
+                form_data.get('cooked_food_closed'))
+            form.cooked_food_temp = int(form_data.get('cooked_food_temp'))
+            form.cooked_food_container = int(
+                form_data.get('cooked_food_container'))
+            form.cooked_food_contam_prevented = int(
+                form_data.get('cooked_food_contam_prevented'))
+            form.uncooked_food_contam_prevented = int(
+                form_data.get('uncooked_food_contam_prevented'))
+            form.sum_food_storage = form.cooked_food_closed + form.cooked_food_temp + \
+                form.cooked_food_container + form.cooked_food_contam_prevented + \
+                form.uncooked_food_contam_prevented
+
+        form.sum_all = form.sum_general_details + form.sum_building_details + \
+            form.sum_food_handler + form.sum_processing_and_serving + form.sum_food_storage
+
+        # Grade
+        if (form.sum_all >= 75) and (form.sum_all <= 100):
+            form.grade = 'A'
+        elif (form.sum_all >= 50) and (form.sum_all < 75):
+            form.grade = 'B'
+        elif (form.sum_all >= 25) and (form.sum_all < 50):
+            form.grade = 'C'
+        else:
+            form.grade = 'D'
+
+        db.session.add(form)
+        db.session.commit()
+
+        flash("Inspection form saved successfully!", "success")
+        return redirect(url_for('main.dashboard'))
 
     return render_template('add_form.html', locations=locations)
+
 
 @main.route('/forms/<int:location_id>')
 @login_required
 def view_forms(location_id):
-    forms = QuestionForm.query.filter_by(location_id=location_id).order_by(QuestionForm.created_at.desc()).all()
+    forms = QuestionForm.query.filter_by(location_id=location_id).order_by(
+        QuestionForm.created_at.desc()).all()
     location = Location.query.get_or_404(location_id)
     return render_template('view_forms.html', forms=forms, location=location)
+
 
 @main.route('/edit_form/<int:form_id>', methods=['GET', 'POST'])
 @login_required
@@ -174,117 +214,137 @@ def edit_form(form_id):
     locations = Location.query.all()
 
     if request.method == 'POST':
-        try:
-            form_data = request.form
-            
-            # Get checkbox flags
-            form.is_eligible_register_info = form_data.get('is_eligible_register_info') == 'on'
-            form.is_eligible_food_handler_info = form_data.get('is_eligible_food_handler_info') == 'on'
-            form.is_eligible_processing_info = form_data.get('is_eligible_processing_info') == 'on'
-            form.is_eligible_food_storage_info = form_data.get('is_eligible_food_storage_info') == 'on'
+        form_data = request.form
 
-            # General
-            if form.is_eligible_register_info:
-                form.premises_registered = -1
-                form.certificate_displayed = -1
-                form.not_convicted = int(form_data.get('not_convicted'))
-                form.food_not_destroyed = int(form_data.get('food_not_destroyed'))
-                form.sum_general_details = 10 + form.not_convicted + form.food_not_destroyed
-            else:
-                form.premises_registered = int(form_data.get('premises_registered'))
-                form.certificate_displayed = int(form_data.get('certificate_displayed'))
-                form.not_convicted = int(form_data.get('not_convicted'))
-                form.food_not_destroyed = int(form_data.get('food_not_destroyed'))
-                form.sum_general_details = (
-                    form.premises_registered + form.certificate_displayed +
-                    form.not_convicted + form.food_not_destroyed
-                )
+        # Get checkbox flags
+        form.is_eligible_register_info = form_data.get(
+            'is_eligible_register_info') == 'on'
+        form.is_eligible_food_handler_info = form_data.get(
+            'is_eligible_food_handler_info') == 'on'
+        form.is_eligible_processing_info = form_data.get(
+            'is_eligible_processing_info') == 'on'
+        form.is_eligible_food_storage_info = form_data.get(
+            'is_eligible_food_storage_info') == 'on'
 
-            # Building
-            form.safe_water = int(form_data.get('safe_water'))
-            form.cleanliness = int(form_data.get('cleanliness'))
-            form.pests_animals = int(form_data.get('pests_animals'))
-            form.sound_pollution = int(form_data.get('sound_pollution'))
-            form.toilets_cleanliness = int(form_data.get('toilets_cleanliness'))
-            form.sum_building_details = (
-                form.safe_water + form.cleanliness + form.pests_animals +
-                form.sound_pollution + form.toilets_cleanliness
+        # General
+        if form.is_eligible_register_info:
+            form.premises_registered = -1
+            form.certificate_displayed = -1
+            form.not_convicted = int(form_data.get('not_convicted'))
+            form.food_not_destroyed = int(form_data.get('food_not_destroyed'))
+            form.sum_general_details = 10 + form.not_convicted + form.food_not_destroyed
+        else:
+            form.premises_registered = int(
+                form_data.get('premises_registered'))
+            form.certificate_displayed = int(
+                form_data.get('certificate_displayed'))
+            form.not_convicted = int(form_data.get('not_convicted'))
+            form.food_not_destroyed = int(form_data.get('food_not_destroyed'))
+            form.sum_general_details = (
+                form.premises_registered + form.certificate_displayed +
+                form.not_convicted + form.food_not_destroyed
             )
 
-            # Food Handler
-            if form.is_eligible_food_handler_info:
-                form.medical_certificates = -1
-                form.proper_clothing = -1
-                form.unhygienic_behaviour = -1
-                form.clean_utensils = -1
-                form.sum_food_handler = 20
-            else:
-                form.medical_certificates = int(form_data.get('medical_certificates'))
-                form.proper_clothing = int(form_data.get('proper_clothing'))
-                form.unhygienic_behaviour = int(form_data.get('unhygienic_behaviour'))
-                form.clean_utensils = int(form_data.get('clean_utensils'))
-                form.sum_food_handler = (
-                    form.medical_certificates + form.proper_clothing +
-                    form.unhygienic_behaviour + form.clean_utensils
-                )
+        # Building
+        form.safe_water = int(form_data.get('safe_water'))
+        form.cleanliness = int(form_data.get('cleanliness'))
+        form.pests_animals = int(form_data.get('pests_animals'))
+        form.sound_pollution = int(form_data.get('sound_pollution'))
+        form.toilets_cleanliness = int(form_data.get('toilets_cleanliness'))
+        form.sum_building_details = (
+            form.safe_water + form.cleanliness + form.pests_animals +
+            form.sound_pollution + form.toilets_cleanliness
+        )
 
-            # Processing and Serving
-            if form.is_eligible_processing_info:
-                form.walls_hygienic = -1
-                form.floor_hygienic = -1
-                form.ceiling_hygienic = -1
-                form.food_surfaces_clean = -1
-                form.wastewater_disposal = -1
-                form.closed_bins = -1
-                form.sum_processing_and_serving = 20
-            else:
-                form.walls_hygienic = int(form_data.get('walls_hygienic'))
-                form.floor_hygienic = int(form_data.get('floor_hygienic'))
-                form.ceiling_hygienic = int(form_data.get('ceiling_hygienic'))
-                form.food_surfaces_clean = int(form_data.get('food_surfaces_clean'))
-                form.wastewater_disposal = int(form_data.get('wastewater_disposal'))
-                form.closed_bins = int(form_data.get('closed_bins'))
-                form.sum_processing_and_serving = (
-                    form.walls_hygienic + form.floor_hygienic +
-                    form.ceiling_hygienic + form.food_surfaces_clean +
-                    form.wastewater_disposal + form.closed_bins
-                )
-
-            # Food Storage
-            if form.is_eligible_food_storage_info:
-                form.cooked_food_closed = -1
-                form.cooked_food_temp = -1
-                form.cooked_food_container = -1
-                form.cooked_food_contam_prevented = -1
-                form.uncooked_food_contam_prevented = int(form_data.get('uncooked_food_contam_prevented'))
-                form.sum_food_storage = 16 + form.uncooked_food_contam_prevented
-            else:
-                form.cooked_food_closed = int(form_data.get('cooked_food_closed'))
-                form.cooked_food_temp = int(form_data.get('cooked_food_temp'))
-                form.cooked_food_container = int(form_data.get('cooked_food_container'))
-                form.cooked_food_contam_prevented = int(form_data.get('cooked_food_contam_prevented'))
-                form.uncooked_food_contam_prevented = int(form_data.get('uncooked_food_contam_prevented'))
-                form.sum_food_storage = (
-                    form.cooked_food_closed + form.cooked_food_temp + form.cooked_food_container +
-                    form.cooked_food_contam_prevented + form.uncooked_food_contam_prevented
-                )
-
-            # Final Total
-            form.sum_all = (
-                form.sum_general_details + form.sum_building_details +
-                form.sum_food_handler + form.sum_processing_and_serving +
-                form.sum_food_storage
+        # Food Handler
+        if form.is_eligible_food_handler_info:
+            form.medical_certificates = -1
+            form.proper_clothing = -1
+            form.unhygienic_behaviour = -1
+            form.clean_utensils = -1
+            form.sum_food_handler = 20
+        else:
+            form.medical_certificates = int(
+                form_data.get('medical_certificates'))
+            form.proper_clothing = int(form_data.get('proper_clothing'))
+            form.unhygienic_behaviour = int(
+                form_data.get('unhygienic_behaviour'))
+            form.clean_utensils = int(form_data.get('clean_utensils'))
+            form.sum_food_handler = (
+                form.medical_certificates + form.proper_clothing +
+                form.unhygienic_behaviour + form.clean_utensils
             )
 
-            db.session.commit()
+        # Processing and Serving
+        if form.is_eligible_processing_info:
+            form.walls_hygienic = -1
+            form.floor_hygienic = -1
+            form.ceiling_hygienic = -1
+            form.food_surfaces_clean = -1
+            form.wastewater_disposal = -1
+            form.closed_bins = -1
+            form.sum_processing_and_serving = 20
+        else:
+            form.walls_hygienic = int(form_data.get('walls_hygienic'))
+            form.floor_hygienic = int(form_data.get('floor_hygienic'))
+            form.ceiling_hygienic = int(form_data.get('ceiling_hygienic'))
+            form.food_surfaces_clean = int(
+                form_data.get('food_surfaces_clean'))
+            form.wastewater_disposal = int(
+                form_data.get('wastewater_disposal'))
+            form.closed_bins = int(form_data.get('closed_bins'))
+            form.sum_processing_and_serving = (
+                form.walls_hygienic + form.floor_hygienic +
+                form.ceiling_hygienic + form.food_surfaces_clean +
+                form.wastewater_disposal + form.closed_bins
+            )
 
-            return redirect(url_for('main.dashboard'))
+        # Food Storage
+        if form.is_eligible_food_storage_info:
+            form.cooked_food_closed = -1
+            form.cooked_food_temp = -1
+            form.cooked_food_container = -1
+            form.cooked_food_contam_prevented = -1
+            form.uncooked_food_contam_prevented = int(
+                form_data.get('uncooked_food_contam_prevented'))
+            form.sum_food_storage = 16 + form.uncooked_food_contam_prevented
+        else:
+            form.cooked_food_closed = int(form_data.get('cooked_food_closed'))
+            form.cooked_food_temp = int(form_data.get('cooked_food_temp'))
+            form.cooked_food_container = int(
+                form_data.get('cooked_food_container'))
+            form.cooked_food_contam_prevented = int(
+                form_data.get('cooked_food_contam_prevented'))
+            form.uncooked_food_contam_prevented = int(
+                form_data.get('uncooked_food_contam_prevented'))
+            form.sum_food_storage = (
+                form.cooked_food_closed + form.cooked_food_temp + form.cooked_food_container +
+                form.cooked_food_contam_prevented + form.uncooked_food_contam_prevented
+            )
 
-        except Exception as e:
-            db.session.rollback()
-            flash(f"Error occurred: {str(e)}", "danger")
+        # Final Total
+        form.sum_all = (
+            form.sum_general_details + form.sum_building_details +
+            form.sum_food_handler + form.sum_processing_and_serving +
+            form.sum_food_storage
+        )
+
+        # Grade
+        if (form.sum_all >= 75) and (form.sum_all <= 100):
+            form.grade = 'A'
+        elif (form.sum_all >= 50) and (form.sum_all < 75):
+            form.grade = 'B'
+        elif (form.sum_all >= 25) and (form.sum_all < 50):
+            form.grade = 'C'
+        else:
+            form.grade = 'D'
+
+        db.session.commit()
+
+        return redirect(url_for('main.dashboard'))
 
     return render_template("edit_form.html", form=form, locations=locations, getattr=getattr)
+
 
 @main.route('/delete_form/<int:form_id>')
 @login_required
@@ -297,6 +357,7 @@ def delete_form(form_id):
     db.session.commit()
     return redirect(url_for('main.dashboard'))
 
+
 @main.route('/add-location', methods=['GET', 'POST'])
 @login_required
 def add_location():
@@ -307,20 +368,22 @@ def add_location():
         name_of_premise = request.form.get('name_of_premise', '').strip()
         address_of_premise = request.form.get('address_of_premise', '').strip()
         gs_area = request.form.get('gs_area', '').strip()
-        category_of_premise = request.form.get('category_of_premise', '').strip()
-        
+        category_of_premise = request.form.get(
+            'category_of_premise', '').strip()
+
         owner_name = request.form.get('owner_name', '').strip()
         owner_nic = request.form.get('owner_nic', '').strip()
         owner_address = request.form.get('owner_address', '').strip()
-        
+
         contact_number = request.form.get('contact_number', '').strip()
-        owner_contact_number = request.form.get('owner_contact_number', '').strip()
+        owner_contact_number = request.form.get(
+            'owner_contact_number', '').strip()
 
         print(all([
             area_id, name_of_premise, address_of_premise, gs_area, category_of_premise,
             owner_name, owner_nic, owner_address, contact_number, owner_contact_number
         ]))
-        
+
         if all([
             area_id, name_of_premise, address_of_premise, gs_area, category_of_premise,
             owner_name, owner_nic, owner_address, contact_number, owner_contact_number
@@ -345,6 +408,7 @@ def add_location():
             flash("Please fill in all required fields.", "error")
 
     return render_template('add_location.html', areas=areas)
+
 
 @main.route('/locations')
 @login_required
@@ -371,12 +435,14 @@ def view_locations():
         query = query.filter_by(area_id=area_id)
 
     if category:
-        query = query.filter(Location.category_of_premise.ilike(f"%{category}%"))
+        query = query.filter(
+            Location.category_of_premise.ilike(f"%{category}%"))
 
     locations = query.order_by(Location.id.asc()).all()
     areas = Area.query.all()
 
     return render_template('locations.html', locations=locations, areas=areas, selected_area_id=area_id)
+
 
 @main.route("/gen_pdf")
 @login_required
@@ -384,13 +450,14 @@ def gen_pdf():
     locations = Location.query.all()
     return render_template('gen_pdf.html', locations=locations)
 
+
 @main.route('/pdf')
 @login_required
 def generate_pdf():
     qry_id = request.args.get('id', '').strip().lower()
     qry_count = request.args.get('count', '').strip().lower()
-    qry_fill_location = request.args.get('fill_location', '').strip()== "1"
-    
+    qry_fill_location = request.args.get('fill_location', '').strip() == "1"
+
     if qry_count:
         try:
             if qry_count == 'all':
@@ -401,17 +468,17 @@ def generate_pdf():
             rec_count = 6
     else:
         rec_count = 6
-            
-    
+
     data = {}
-    
+
     res_location = Location.query.get_or_404(qry_id)
-    res_forms = QuestionForm.query.filter_by(location_id=qry_id).order_by(QuestionForm.created_at.asc()).limit(rec_count).all()
+    res_forms = QuestionForm.query.filter_by(location_id=qry_id).order_by(
+        QuestionForm.created_at.asc()).limit(rec_count).all()
     print(rec_count, res_forms)
-    
+
     if not res_forms:
         print("Form not found")
-            
+
     if qry_fill_location:
         data['name_of_premise'] = res_location.name_of_premise
         data['address_of_premise'] = res_location.address_of_premise
@@ -422,12 +489,12 @@ def generate_pdf():
         data['owner_address'] = res_location.owner_address
         data['contact_number'] = res_location.contact_number
         data['owner_contact_number'] = res_location.owner_contact_number
-    
+
     # Fill all columns in pdf
     for row_num, res_form in enumerate(res_forms, start=1):
         # Date
         data[f'date{row_num}'] = res_form.created_at.strftime('%d/%m')
-        
+
         # General Details
         if not res_form.is_eligible_register_info:
             data[f'd{row_num}_q1_1'] = res_form.premises_registered
@@ -437,7 +504,7 @@ def generate_pdf():
         data[f'd{row_num}_q1_3'] = res_form.not_convicted
         data[f'd{row_num}_q1_4'] = res_form.food_not_destroyed
         data[f'd{row_num}_q1_sum'] = res_form.sum_general_details
-        
+
         # Building Details
         data[f'd{row_num}_q2_1'] = res_form.safe_water
         data[f'd{row_num}_q2_2'] = res_form.cleanliness
@@ -445,7 +512,7 @@ def generate_pdf():
         data[f'd{row_num}_q2_4'] = res_form.sound_pollution
         data[f'd{row_num}_q2_5'] = res_form.toilets_cleanliness
         data[f'd{row_num}_q2_sum'] = res_form.sum_building_details
-        
+
         # Food Handler
         if not res_form.is_eligible_food_handler_info:
             data[f'd{row_num}_q3_1'] = res_form.medical_certificates
@@ -456,7 +523,7 @@ def generate_pdf():
         else:
             data[f'd{row_num}_q3_s1'] = 20
             data[f'd{row_num}_q3_sum'] = 20
-            
+
         # Processing and Serving
         if not res_form.is_eligible_processing_info:
             data[f'd{row_num}_q4_1'] = res_form.walls_hygienic
@@ -469,7 +536,7 @@ def generate_pdf():
         else:
             data[f'd{row_num}_q4_s1'] = 20
             data[f'd{row_num}_q4_sum'] = 20
-        
+
         # Food Storage
         if not res_form.is_eligible_food_storage_info:
             data[f'd{row_num}_q5_1'] = res_form.cooked_food_closed
@@ -481,32 +548,25 @@ def generate_pdf():
             data[f'd{row_num}_q5_s1'] = 16
         data[f'd{row_num}_q5_5'] = res_form.uncooked_food_contam_prevented
         data[f'd{row_num}_q5_sum'] = res_form.sum_food_storage
-        
+
         # Final Stuff
         data[f'd{row_num}_f_sum'] = res_form.sum_all
-        data[f'd{row_num}_f_percentage'] = int((data[f'd{row_num}_f_sum'] / 100) * 100)
-        
+        data[f'd{row_num}_f_percentage'] = int(
+            (data[f'd{row_num}_f_sum'] / 100) * 100)
+
         # The grading is done as follows, based on the percentage:
         #   75 - 100: A
         #   50 - 74: B
         #   25 - 49: C
         #   0 - 24: D
-        if (data[f'd{row_num}_f_percentage'] >= 75) and (data[f'd{row_num}_f_percentage'] <= 100):
-            data[f'd{row_num}_f_grade'] = 'A'
-        elif (data[f'd{row_num}_f_percentage'] >= 50) and (data[f'd{row_num}_f_percentage'] < 75):
-            data[f'd{row_num}_f_grade'] = 'B'
-        elif (data[f'd{row_num}_f_percentage'] >= 25) and (data[f'd{row_num}_f_percentage'] < 50):
-            data[f'd{row_num}_f_grade'] = 'C'
-        else:
-            data[f'd{row_num}_f_grade'] = 'D'
-
+        data[f'd{row_num}_f_grade'] = res_form.grade
 
     filled_pdf = PdfWrapper("pdf/template-si.pdf").fill(data)
-    
+
     with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp_file:
         tmp_file.write(filled_pdf.read())
         tmp_file_path = tmp_file.name
-    
+
     # Set metadata using PyPDF2
     reader = PdfReader(tmp_file_path)
     writer = PdfWriter()
@@ -523,7 +583,7 @@ def generate_pdf():
     # Save the updated PDF with metadata
     with open(tmp_file_path, "wb") as f:
         writer.write(f)
-        
+
     @after_this_request
     def remove_file(response):
         try:
@@ -538,4 +598,3 @@ def generate_pdf():
         as_attachment=True,
         download_name=f"{datetime.now().strftime('%Y%m%d_%H_%M_%S')}.pdf"
     )
-

@@ -64,7 +64,10 @@
                 at {{ form.created_at.strftime('%Y-%m-%d %I:%M %p') }}
               </p>
             </div>
-            <span class="badge badge-secondary">{{ form.sum_all }}%</span>
+            <div class="flex flex-row gap-1">
+              <span class="badge badge-soft badge-secondary">{{ form.sum_all }}%</span>
+              <span class="badge badge-soft badge-accent">{{ form.grade }}</span>
+            </div>
           </div>
 
           <div class="text-sm leading-relaxed">
