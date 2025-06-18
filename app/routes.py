@@ -379,11 +379,6 @@ def add_location():
         owner_contact_number = request.form.get(
             'owner_contact_number', '').strip()
 
-        print(all([
-            area_id, name_of_premise, address_of_premise, gs_area, category_of_premise,
-            owner_name, owner_nic, owner_address, contact_number, owner_contact_number
-        ]))
-
         if all([
             area_id, name_of_premise, address_of_premise, gs_area, category_of_premise,
             owner_name, owner_nic, owner_address, contact_number, owner_contact_number
@@ -408,6 +403,44 @@ def add_location():
             flash("Please fill in all required fields.", "error")
 
     return render_template('add_location.html', areas=areas)
+
+@main.route('/edit-location/<int:location_id>', methods=['GET', 'POST'])
+@login_required
+def edit_location(location_id):
+    location = Location.query.get_or_404(location_id)
+    areas = Area.query.all()
+
+    if request.method == 'POST':
+        location.area_id = request.form.get('area_id', type=int)
+        location.name_of_premise = request.form.get('name_of_premise', '').strip()
+        location.address_of_premise = request.form.get('address_of_premise', '').strip()
+        location.gs_area = request.form.get('gs_area', '').strip()
+        location.category_of_premise = request.form.get('category_of_premise', '').strip()
+
+        location.owner_name = request.form.get('owner_name', '').strip()
+        location.owner_nic = request.form.get('owner_nic', '').strip()
+        location.owner_address = request.form.get('owner_address', '').strip()
+
+        location.contact_number = request.form.get('contact_number', '').strip()
+        location.owner_contact_number = request.form.get('owner_contact_number', '').strip()
+
+        if all([
+            location.area_id, location.name_of_premise, location.address_of_premise,
+            location.gs_area, location.category_of_premise, location.owner_name,
+            location.owner_nic, location.owner_address, location.contact_number,
+            location.owner_contact_number
+        ]):
+            try:
+                db.session.commit()
+                flash("Location updated successfully!", "success")
+                return redirect(url_for('main.dashboard'))
+            except Exception as e:
+                db.session.rollback()
+                flash(f"An error occurred: {str(e)}", "danger")
+        else:
+            flash("Please fill in all required fields.", "error")
+
+    return render_template('edit_location.html', location=location, areas=areas)
 
 
 @main.route('/locations')

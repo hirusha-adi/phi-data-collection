@@ -1,17 +1,35 @@
 {% extends "layout.html" %}
-{% block title %}{{ location.name_and_address_of_establishment }} | Inspections{% endblock %}
+{% block title %}{{ location.name_of_premise }} | Inspections{% endblock %}
 {% block content %}
 
 <div class="max-w-md mx-auto px-4 py-6">
-  <h2 class="text-xl font-bold mb-6 text-center">📋 Inspection Records</h2>
+  <h2 class="text-xl font-bold text-center">📋 Inspection Records</h2>
 
-  <h2 class="mt-4 mb-3 text-lg font-bold">of {{ location.name_of_premise }}</h2>
+  <h2 class="mt-3 mb-5 text-md font-bold text-center">of {{ location.name_of_premise }}</h2>
+
+  <h2 class="mt-4 mb-3 text-lg font-bold">Actions</h2>
+  <div class="grid grid-cols-2 gap-x-3">
+    <a href="{{ url_for('main.add_form', location_id=location.id) }}" class="btn btn-soft btn-primary">
+      ➕ New Inspection
+    </a>
+    <a href="{{ url_for('main.gen_pdf',  location_id=location.id) }}" class="btn btn-soft btn-primary">
+      ↗ Generate PDF
+    </a>
+  </div>
+  <div class="grid grid-cols-2 gap-x-3 mb-6 mt-3">
+    <a href="{{ url_for('main.edit_location', location_id=location.id) }}" class="btn btn-soft btn-primary">
+      ✏️ Edit Location
+    </a>
+    <a href="{{ url_for('main.dashboard') }}" class="btn btn-ghost">← Back to Dashboard</a>
+  </div>
+
+  <h2 class="mt-4 mb-3 text-lg font-bold">Location Information</h2>
   <div class="card bg-base-100 shadow-sm mb-8">
     <div class="card-body">
       <p>
+        <strong>Name of the premise:-</strong> <br>{{ location.name_of_premise }} <br><br>
         <strong>PHI Area:-</strong> {{ location.area.name }} <br><br>
         <strong>Grama Sevaka Area:-</strong> <br>{{ location.gs_area }} <br><br>
-        <strong>Name of the premise:-</strong> <br>{{ location.name_of_premise }} <br><br>
         <strong>Address of the premise:-</strong> <br>{{ location.address_of_premise }} <br><br>
         <strong>Category of the premise:-</strong> <br>{{ location.category_of_premise }} <br><br>
         <strong>Name of the owner:-</strong> <br>{{ location.owner_name }} <br><br>
@@ -22,15 +40,6 @@
       </p>
     </div>
   </div>
-
-
-  <div class="grid grid-cols-2 gap-x-3">
-    <a href="{{ url_for('main.add_form', location_id=location.id) }}" class="btn btn-soft btn-primary">➕ New
-      Inspection</a>
-    <a href="{{ url_for('main.gen_pdf',  location_id=location.id) }}" class="btn btn-soft btn-primary">↗ Generate
-      PDF</a>
-  </div>
-  <a href="{{ url_for('main.dashboard') }}" class="btn btn-ghost mb-12 mt-3 w-full">← Back to Dashboard</a>
 
   <div class="mt-5 mb-7 text-lg font-bold">
     Total inspections: {{ forms|length }}
