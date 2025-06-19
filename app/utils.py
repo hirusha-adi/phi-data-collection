@@ -7,7 +7,6 @@ def create_default_users():
     with open("config.json", "r", encoding="utf-8") as _config_file:
         config = json.load(_config_file)
     default_users = config['default_users']
-    
     default_areas = config['default_areas']
 
     for user in default_users:

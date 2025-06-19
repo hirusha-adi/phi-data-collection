@@ -1,4 +1,5 @@
 from flask import Flask
+import json
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 
@@ -10,7 +11,11 @@ def value_or_na(value):
 
 def create_app():
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = 'your-secret-key'
+    
+    with open("config.json", "r", encoding="utf-8") as _config_file:
+        config = json.load(_config_file)
+        
+    app.config['SECRET_KEY'] = config['secret_key']
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///phi_app.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.jinja_env.filters['value_or_na'] = value_or_na
