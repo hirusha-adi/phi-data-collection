@@ -1,0 +1,9 @@
+{
+    "default_areas": [
+        {"name": "Area 1"},
+        {"name": "Area 2"}
+    ],
+    "default_users": [
+        {"name": "User 1", "username": "admin", "password": "123"}
+    ]
+}

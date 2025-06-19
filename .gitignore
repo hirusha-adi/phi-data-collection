@@ -198,7 +198,6 @@ cython_debug/
 logs/
 *.db
 tmp/
-
-# TODO: Exclude pdf/template-si.pdf
 *.pdf
-
+!pdf/template-si.pdf
+config.prod.json

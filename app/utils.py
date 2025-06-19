@@ -1,18 +1,14 @@
 from werkzeug.security import generate_password_hash
 from .models import User, Area
 from . import db
+import json
 
 def create_default_users():
-    default_users = [
-        {'name': 'Administrator', 'username': 'admin', 'password': '12345678'},
-        {'name': 'Hirusha Adikari', 'username': 'hirushaadi', 'password': '12345678'},
-    ]
+    with open("config.json", "r", encoding="utf-8") as _config_file:
+        config = json.load(_config_file)
+    default_users = config['default_users']
     
-    default_areas = [
-        {'name': 'Ambanpola'},
-        {'name': 'Keththaphuwa'},
-        {'name': 'Borawewa'},
-    ]
+    default_areas = config['default_areas']
 
     for user in default_users:
         if not User.query.filter_by(username=user['username']).first():
